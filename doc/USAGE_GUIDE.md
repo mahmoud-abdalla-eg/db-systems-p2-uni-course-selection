@@ -1,17 +1,8 @@
-# Database Systems (DBS) — Project 2 Usage & Architecture Guide
-## Topic: University Course Selection (Teaching Administration Management)
+# University Course Selection — Usage & Architecture Guide
 
-* **Course**: Database Systems (DBS)  
-* **Institution**: Jinan University (JNU)  
-* **Format**: Individual Project  
-* **Submission Deadline**: Before December 25, 2026  
-* **Email**: `1023391448@qq.com`  
+## 1. Application Overview
 
----
-
-## 1. Project Background & Requirements Overview
-
-In higher education teaching administration, course selection is a safety-critical transaction processing system. In accordance with the official specification (`DBS2026-Project2.pdf`), this project implements a relational database-backed application focusing on **Selecting Courses (Select-Courses)** with essential helper features:
+This relational database-backed application focuses on course selection and its essential helper features:
 
 1. **View Selectable Courses**: Browse all open courses, instructor details, department filters, and real-time seat capacities.
 2. **View Selected Courses**: Inspect active course registrations for the semester.
