@@ -85,7 +85,7 @@ export default function AuthModal({ isOpen, onClose, onLogin, onRegister, embedd
             <>
               <div className="form-group">
                 <label htmlFor="student-name">Full name</label>
-                <input id="student-name" type="text" className="form-input" required value={name} onChange={event => setName(event.target.value)} placeholder="e.g. Alex Chen" autoComplete="name" />
+                <input id="student-name" type="text" className="form-input" required value={name} onChange={event => setName(event.target.value)} placeholder="e.g. Li Wei" autoComplete="name" />
               </div>
               <div className="form-group">
                 <label htmlFor="student-major">Major</label>
@@ -96,7 +96,7 @@ export default function AuthModal({ isOpen, onClose, onLogin, onRegister, embedd
 
           <div className="form-group">
             <label htmlFor="student-email">Student email</label>
-            <input id="student-email" type="email" className="form-input" required value={email} onChange={event => setEmail(event.target.value)} placeholder="e.g. alex.student@jnu.edu.cn" autoComplete="email" />
+            <input id="student-email" type="email" className="form-input" required value={email} onChange={event => setEmail(event.target.value)} placeholder="e.g. li.wei@jnu.edu.cn" autoComplete="email" />
           </div>
 
           <div className="form-group">
@@ -121,11 +121,11 @@ export default function AuthModal({ isOpen, onClose, onLogin, onRegister, embedd
           <div className="demo-credentials">
             <strong>Demo accounts</strong>
             <p>Use one of these to demonstrate the database rules.</p>
-            <button type="button" className="demo-account" onClick={() => fillDemo("alex.student@jnu.edu.cn", "student123")}>
-              <span>Alex Chen</span><small>2025 cohort · second year</small>
+            <button type="button" className="demo-account" onClick={() => fillDemo("li.wei@jnu.edu.cn", "student123")}>
+              <span>Li Wei</span><small>2025 cohort · second year</small>
             </button>
-            <button type="button" className="demo-account" onClick={() => fillDemo("maria.silva@jnu.edu.cn", "student123")}>
-              <span>Maria Silva</span><small>2024 cohort · third year</small>
+            <button type="button" className="demo-account" onClick={() => fillDemo("omar.hassan@jnu.edu.cn", "student123")}>
+              <span>Omar Hassan</span><small>2024 cohort · third year</small>
             </button>
           </div>
         )}

@@ -25,8 +25,8 @@ public class SeedData {
             // 1. Users
             stmt.execute("""
                 INSERT INTO users (user_no, name, email, password, major, role) VALUES
-                ('2025101001', 'Alex Chen', 'alex.student@jnu.edu.cn', 'student123', 'Computer Science', 'STUDENT'),
-                ('2024101002', 'Maria Silva', 'maria.silva@jnu.edu.cn', 'student123', 'Software Engineering', 'STUDENT'),
+                ('2025101001', 'Li Wei', 'li.wei@jnu.edu.cn', 'student123', 'Computer Science', 'STUDENT'),
+                ('2024101002', 'Omar Hassan', 'omar.hassan@jnu.edu.cn', 'student123', 'Software Engineering', 'STUDENT'),
                 ('ADMIN001', 'Dean of Studies', 'admin@jnu.edu.cn', 'admin123', 'Teaching Affairs Office', 'ADMIN');
             """);
 
@@ -73,8 +73,8 @@ public class SeedData {
             """);
 
             // 5. Academic History
-            // Alex Chen is a 2025 cohort student: one completed academic year.
-            // Maria Silva is a 2024 cohort student: two completed academic years.
+            // Li Wei is a 2025 cohort student: one completed academic year.
+            // Omar Hassan is a 2024 cohort student: two completed academic years.
             stmt.execute("""
                 INSERT INTO student_course_history (user_id, course_id, semester, grade, status) VALUES
                 (1, 1, '2025-Fall', 'A', 'PASSED'),
@@ -105,24 +105,24 @@ public class SeedData {
         try (Connection conn = db.getConnection()) {
             try (PreparedStatement ps = conn.prepareStatement("UPDATE users SET user_no = ?, name = ?, password = ?, major = ?, role = 'STUDENT' WHERE email = ?")) {
                 ps.setString(1, "2025101001");
-                ps.setString(2, "Alex Chen");
+                ps.setString(2, "Li Wei");
                 ps.setString(3, "student123");
                 ps.setString(4, "Computer Science");
-                ps.setString(5, "alex.student@jnu.edu.cn");
+                ps.setString(5, "li.wei@jnu.edu.cn");
                 ps.executeUpdate();
                 ps.setString(1, "2024101002");
-                ps.setString(2, "Maria Silva");
+                ps.setString(2, "Omar Hassan");
                 ps.setString(3, "student123");
                 ps.setString(4, "Software Engineering");
-                ps.setString(5, "maria.silva@jnu.edu.cn");
+                ps.setString(5, "omar.hassan@jnu.edu.cn");
                 ps.executeUpdate();
             }
 
-            ensureDemoUser(conn, "2025101001", "Alex Chen", "alex.student@jnu.edu.cn", "Computer Science");
-            ensureDemoUser(conn, "2024101002", "Maria Silva", "maria.silva@jnu.edu.cn", "Software Engineering");
+            ensureDemoUser(conn, "2025101001", "Li Wei", "li.wei@jnu.edu.cn", "Computer Science");
+            ensureDemoUser(conn, "2024101002", "Omar Hassan", "omar.hassan@jnu.edu.cn", "Software Engineering");
 
             try (Statement stmt = conn.createStatement()) {
-                stmt.executeUpdate("DELETE FROM student_course_history WHERE user_id IN (SELECT id FROM users WHERE email IN ('alex.student@jnu.edu.cn', 'maria.silva@jnu.edu.cn'))");
+                stmt.executeUpdate("DELETE FROM student_course_history WHERE user_id IN (SELECT id FROM users WHERE email IN ('li.wei@jnu.edu.cn', 'omar.hassan@jnu.edu.cn'))");
             }
 
             String historySql = """
@@ -130,20 +130,20 @@ public class SeedData {
                 SELECT id, ?, ?, ?, ? FROM users WHERE email = ?
             """;
             try (PreparedStatement ps = conn.prepareStatement(historySql)) {
-                String[][] alex = {
+                String[][] liWei = {
                         {"1", "2025-Fall", "A"}, {"2", "2025-Fall", "B+"},
                         {"9", "2026-Spring", "B"}, {"10", "2026-Spring", "A"},
                         {"6", "2026-Spring", "B+"}
                 };
-                String[][] maria = {
+                String[][] omarHassan = {
                         {"1", "2024-Fall", "A"}, {"2", "2024-Fall", "A-"},
                         {"9", "2024-Fall", "B+"}, {"10", "2024-Fall", "A"},
                         {"3", "2025-Spring", "A"}, {"6", "2025-Spring", "A-"},
                         {"4", "2025-Fall", "A"}, {"7", "2025-Fall", "B+"},
                         {"5", "2026-Spring", "A"}, {"8", "2026-Spring", "A-"}
                 };
-                insertHistory(ps, "alex.student@jnu.edu.cn", alex);
-                insertHistory(ps, "maria.silva@jnu.edu.cn", maria);
+                insertHistory(ps, "li.wei@jnu.edu.cn", liWei);
+                insertHistory(ps, "omar.hassan@jnu.edu.cn", omarHassan);
             }
         }
     }
