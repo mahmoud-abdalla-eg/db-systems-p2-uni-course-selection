@@ -56,7 +56,7 @@ export default function CourseCard({ course, onEnroll, onDrop, loading }) {
 
       <div className="course-footer">
         <span className={`course-state ${isEnrolled ? "selected" : isSelectable ? "available" : "blocked"}`}>
-          <span className="state-dot" aria-hidden="true" />
+          {isEnrolled ? <span className="state-check" aria-hidden="true">✓</span> : <span className="state-dot" aria-hidden="true" />}
           {isEnrolled ? "Selected" : isSelectable ? "Open for selection" : "Not available"}
         </span>
         {isEnrolled ? (
