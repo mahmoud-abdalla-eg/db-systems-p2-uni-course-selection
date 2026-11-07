@@ -339,6 +339,21 @@ body {
   background: var(--success-soft);
   color: var(--success);
   border: 1px solid #6ee7b7;
+  position: fixed;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  z-index: 50;
+  width: min(22rem, calc(100vw - 2.5rem));
+  margin: 0;
+  padding: 0.95rem 1rem;
+  border-radius: 0.9rem;
+  box-shadow: 0 16px 36px rgba(20, 83, 45, 0.16);
+  animation: toast-in 220ms ease-out both;
+}
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translate3d(0, 0.75rem, 0) scale(0.98); }
+  to { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
 }
 
 /* Courses Grid */
@@ -1259,6 +1274,14 @@ body {
   border: 0;
   font-size: 1.1rem;
   line-height: 1;
+}
+
+@media (max-width: 560px) {
+  .alert-success {
+    right: 0.75rem;
+    bottom: 0.75rem;
+    width: calc(100vw - 1.5rem);
+  }
 }
 
 .modal-overlay {

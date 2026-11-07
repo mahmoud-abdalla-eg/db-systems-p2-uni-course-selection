@@ -39,6 +39,12 @@ export default function App() {
   const [historyModalOpen, setHistoryModalOpen] = useState(false);
 
   useEffect(() => {
+    if (!success) return undefined;
+    const timeout = window.setTimeout(() => setSuccess(null), 3500);
+    return () => window.clearTimeout(timeout);
+  }, [success]);
+
+  useEffect(() => {
     const storedUser = api.getCurrentUser();
     if (!storedUser) {
       setAuthReady(true);
