@@ -13,13 +13,19 @@ import java.sql.Statement;
 public class SeedData {
 
     public static void seedIfEmpty(Database db) throws SQLException {
-        try (Connection conn = db.getConnection(); Statement stmt = conn.createStatement()) {
-            ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM users");
-            if (rs.next() && rs.getInt(1) > 0) {
-                syncDemoStudents(db);
-                return; // Already seeded
-            }
+        boolean alreadySeeded;
+        try (Connection conn = db.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM users")) {
+            alreadySeeded = rs.next() && rs.getInt(1) > 0;
+        }
 
+        if (alreadySeeded) {
+            syncDemoStudents(db);
+            return;
+        }
+
+        try (Connection conn = db.getConnection(); Statement stmt = conn.createStatement()) {
             System.out.println("[SEED] Database is empty. Seeding Uni Course Selection data...");
 
             // 1. Users
