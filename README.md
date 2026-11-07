@@ -48,7 +48,7 @@ CST_DBS_P2_MahmoudAhmed/
         └── vite.config.js
 ```
 
-Generated files are intentionally excluded: `courseforge.db`, Java `bin/` and `target/`, frontend `node_modules/` and `dist/`, and submission archives.
+Generated files are intentionally excluded: `course_data.db`, Java `bin/` and `target/`, frontend `node_modules/` and `dist/`, and submission archives.
 
 ## Requirements
 
@@ -82,7 +82,7 @@ http://localhost:5173
 
 The backend runs at `http://localhost:8080/api` and exposes a health endpoint at `http://localhost:8080/api/health`.
 
-The first run creates and seeds `src/backend/courseforge.db`. The application opens on a sign-in/register page and includes demo students so the prerequisite, credit-limit, and schedule-conflict rules can be demonstrated quickly. The demo accounts represent students at different stages of their degree, while new registrations receive a 2026-cohort student number and start with no previous-course history.
+The first run creates and seeds `src/backend/course_data.db`. The application opens on a sign-in/register page and includes demo students so the prerequisite, credit-limit, and schedule-conflict rules can be demonstrated quickly. The demo accounts represent students at different stages of their degree, while new registrations receive a 2026-cohort student number and start with no previous-course history.
 
 ## Manual Run
 

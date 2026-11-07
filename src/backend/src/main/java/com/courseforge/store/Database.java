@@ -28,7 +28,7 @@ public class Database {
             this.isMySQL = envUrl.toLowerCase().contains("mysql");
         } else {
             // Default to zero-config relational SQLite file database
-            this.dbUrl = "jdbc:sqlite:courseforge.db";
+            this.dbUrl = "jdbc:sqlite:course_data.db";
             this.dbUser = "";
             this.dbPassword = "";
             this.isMySQL = false;

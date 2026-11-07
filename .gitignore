@@ -2,7 +2,7 @@
 bin/
 target/
 *.class
-courseforge.db
+course_data.db
 
 # Generated frontend files
 node_modules/
