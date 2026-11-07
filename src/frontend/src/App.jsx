@@ -169,7 +169,7 @@ export default function App() {
         <Navbar user={null} />
         <main className="auth-page">
           <section className="auth-welcome">
-            <p className="eyebrow">Database Systems · Course planning</p>
+            <p className="eyebrow">Course planning</p>
             <h1>Choose courses with confidence.</h1>
             <p>Sign in to see courses for your major, plan your credits, and keep your timetable clear.</p>
             <div className="auth-points">
@@ -310,7 +310,7 @@ export default function App() {
 
             {activeTab === "rules" && (
               <section className="rules-view" aria-labelledby="rules-title">
-                <p className="kicker">Database Systems · Course planning</p>
+                <p className="kicker">Course planning</p>
                 <h2 id="rules-title">Selection rules</h2>
                 <p className="rules-intro">Each enrollment is checked before it is written to the database.</p>
                 <div className="rules-list">

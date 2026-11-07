@@ -6,7 +6,7 @@ export default function Navbar({ user, catalogCategory, onCatalogChange, onOpenA
       <a className="brand" href="#top" aria-label="Uni Course Selection home">
         <div>
           <span>Uni Course Selection</span>
-          <small>Database Systems · Student portal</small>
+          <small>Student portal</small>
         </div>
       </a>
 
