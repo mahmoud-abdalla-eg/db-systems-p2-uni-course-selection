@@ -20,6 +20,11 @@ const categoryTitles = {
   elective: "General electives"
 };
 
+const requiredCourseCodesByMajor = {
+  "Computer Science": ["CS101", "CS102", "CS105", "CS201", "CS202", "CS203", "CS305", "CS301"],
+  "Software Engineering": ["SE201", "SE202", "SE302", "SE303", "SE304", "SE305", "SE306", "SE307", "SE308"]
+};
+
 export default function App() {
   const [user, setUser] = useState(api.getCurrentUser());
   const [authReady, setAuthReady] = useState(false);
@@ -134,6 +139,8 @@ export default function App() {
   }
 
   const courses = dashboard?.selectableCourses || [];
+  const currentCredits = dashboard?.currentCredits || 0;
+  const maxCredits = dashboard?.maxCredits || 21;
   const categoryCourses = courses.filter(course => {
     if (catalogCategory === "all") return true;
     if (catalogCategory === "major") {
@@ -143,15 +150,25 @@ export default function App() {
     return course.courseCode.startsWith("GEN") ||
       ["Foreign Languages", "Mathematics", "General Education", "Humanities", "Business"].includes(course.department);
   });
-  const majorPrefix = user?.major === "Computer Science" ? "CS" : user?.major === "Software Engineering" ? "SE" : "";
+  const requiredCodes = requiredCourseCodesByMajor[user?.major] || [];
   const visibleCategoryCourses = catalogCategory === "major"
-    ? [...categoryCourses]
-      .sort((a, b) => {
-        const aPriority = majorPrefix && a.courseCode.startsWith(majorPrefix) ? 0 : 1;
-        const bPriority = majorPrefix && b.courseCode.startsWith(majorPrefix) ? 0 : 1;
-        return aPriority - bPriority || a.courseCode.localeCompare(b.courseCode);
-      })
-      .slice(0, 2)
+    ? (() => {
+      const requiredPool = requiredCodes.length > 0
+        ? categoryCourses.filter(course => requiredCodes.includes(course.courseCode))
+        : categoryCourses;
+      const order = new Map(requiredCodes.map((code, index) => [code, index]));
+      const orderedCourses = [...requiredPool].sort((a, b) =>
+        (order.get(a.courseCode) ?? 999) - (order.get(b.courseCode) ?? 999)
+      );
+      const recommendations = [];
+      let recommendationCredits = 0;
+      for (const course of orderedCourses) {
+        recommendations.push(course);
+        recommendationCredits += course.credits;
+        if (recommendationCredits >= maxCredits) break;
+      }
+      return recommendations;
+    })()
     : categoryCourses;
   const departmentOptions = [...new Set(courses.map(course => course.department))].sort();
   const filteredCourses = visibleCategoryCourses.filter(course => {
@@ -163,8 +180,6 @@ export default function App() {
     return matchesSearch && matchesDept;
   });
   const enrolledCourses = dashboard?.enrolledCourses || [];
-  const currentCredits = dashboard?.currentCredits || 0;
-  const maxCredits = dashboard?.maxCredits || 21;
   const cohortYear = Number.parseInt(String(user?.userNo || "").slice(0, 4), 10);
   const studyYear = Number.isFinite(cohortYear) && cohortYear >= 2020
     ? Math.min(4, Math.max(1, 2026 - cohortYear + 1))
@@ -281,7 +296,7 @@ export default function App() {
                 </div>
 
                 <div className="catalog-summary">
-                  <span>{catalogCategory === "major" ? `Recommended for ${user.major}.` : catalogCategory === "elective" ? "General education and elective sections." : "All open sections for the current semester."}</span>
+                  <span>{catalogCategory === "major" ? `Required courses for ${user.major}, planned up to ${maxCredits} credits. Professional and general electives are optional.` : catalogCategory === "elective" ? "General education and elective sections." : "All open sections for the current semester, including other majors."}</span>
                   {(searchTerm || selectedDept !== "ALL") && <button className="text-link" type="button" onClick={() => { setSearchTerm(""); setSelectedDept("ALL"); }}>Clear filters</button>}
                 </div>
 

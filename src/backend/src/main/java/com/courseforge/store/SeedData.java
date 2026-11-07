@@ -131,7 +131,11 @@ public class SeedData {
                         {"21", "GEN103", "Academic Presentation", "General Education", "2", "40", "Prof. Park", "2026-Fall", "Research presentation, public speaking, visual storytelling, and academic communication."},
                         {"22", "HUM101", "Ethics in Technology", "Humanities", "2", "45", "Prof. Ahmed", "2026-Fall", "Ethical reasoning about software, data, artificial intelligence, privacy, and society."},
                         {"23", "BUS101", "Technology Entrepreneurship", "Business", "3", "45", "Prof. Karim", "2026-Fall", "Opportunity discovery, business models, product validation, and technology ventures."},
-                        {"24", "AI302", "Data Mining", "Computer Science", "3", "30", "Prof. Sun", "2026-Fall", "Data mining workflows, classification, clustering, association rules, and model evaluation."}
+                        {"24", "AI302", "Data Mining", "Computer Science", "3", "30", "Prof. Sun", "2026-Fall", "Data mining workflows, classification, clustering, association rules, and model evaluation."},
+                        {"25", "SE305", "Software Project Management", "Software Engineering", "3", "35", "Prof. Youssef", "2026-Fall", "Planning, estimation, risk management, teamwork, and delivery tracking for software projects."},
+                        {"26", "SE306", "Human-Computer Interaction", "Software Engineering", "3", "40", "Prof. Sara", "2026-Fall", "User research, interaction design, prototyping, usability testing, and accessible interfaces."},
+                        {"27", "SE307", "Secure Software Development", "Software Engineering", "3", "35", "Prof. Adel", "2026-Fall", "Threat modeling, secure coding, authentication, authorization, and application security."},
+                        {"28", "SE308", "Software Architecture", "Software Engineering", "3", "35", "Prof. Mona", "2026-Fall", "Architectural styles, component design, scalability, maintainability, and system trade-offs."}
                 };
                 for (String[] course : courses) {
                     ps.setInt(1, Integer.parseInt(course[0]));
@@ -169,7 +173,11 @@ public class SeedData {
                         {"GEN103", "1", "5", "6", "Learning Center L103"},
                         {"HUM101", "4", "5", "6", "Humanities Hall H101"},
                         {"BUS101", "5", "1", "2", "Business Hall H101"},
-                        {"AI302", "3", "5", "6", "AI Innovation Lab A302"}
+                        {"AI302", "3", "5", "6", "AI Innovation Lab A302"},
+                        {"SE305", "1", "7", "8", "Tech Building B305"},
+                        {"SE306", "2", "7", "8", "Tech Building B306"},
+                        {"SE307", "3", "7", "8", "Tech Building B307"},
+                        {"SE308", "4", "7", "8", "Tech Building B308"}
                 };
                 for (String[] schedule : schedules) {
                     ps.setInt(1, Integer.parseInt(schedule[1]));
@@ -194,7 +202,8 @@ public class SeedData {
                 String[][] prerequisites = {
                         {"CS105", "CS101"}, {"CS203", "CS201"}, {"CS305", "CS201"},
                         {"SE202", "CS101"}, {"SE303", "SE201"}, {"SE304", "SE201"},
-                        {"DS201", "MATH201"}, {"AI302", "CS201"}
+                        {"DS201", "MATH201"}, {"AI302", "CS201"},
+                        {"SE305", "SE201"}, {"SE306", "SE202"}, {"SE307", "SE201"}, {"SE308", "SE202"}
                 };
                 for (String[] prerequisite : prerequisites) {
                     ps.setString(1, prerequisite[0]);

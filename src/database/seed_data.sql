@@ -34,7 +34,11 @@ INSERT INTO courses (course_id, course_code, title, department, credits, capacit
 (21, 'GEN103', 'Academic Presentation', 'General Education', 2, 40, 'Prof. Park', '2026-Fall', 'Research presentation, public speaking, visual storytelling, and academic communication.'),
 (22, 'HUM101', 'Ethics in Technology', 'Humanities', 2, 45, 'Prof. Ahmed', '2026-Fall', 'Ethical reasoning about software, data, artificial intelligence, privacy, and society.'),
 (23, 'BUS101', 'Technology Entrepreneurship', 'Business', 3, 45, 'Prof. Karim', '2026-Fall', 'Opportunity discovery, business models, product validation, and technology ventures.'),
-(24, 'AI302', 'Data Mining', 'Computer Science', 3, 30, 'Prof. Sun', '2026-Fall', 'Data mining workflows, classification, clustering, association rules, and model evaluation.')
+(24, 'AI302', 'Data Mining', 'Computer Science', 3, 30, 'Prof. Sun', '2026-Fall', 'Data mining workflows, classification, clustering, association rules, and model evaluation.'),
+(25, 'SE305', 'Software Project Management', 'Software Engineering', 3, 35, 'Prof. Youssef', '2026-Fall', 'Planning, estimation, risk management, teamwork, and delivery tracking for software projects.'),
+(26, 'SE306', 'Human-Computer Interaction', 'Software Engineering', 3, 40, 'Prof. Sara', '2026-Fall', 'User research, interaction design, prototyping, usability testing, and accessible interfaces.'),
+(27, 'SE307', 'Secure Software Development', 'Software Engineering', 3, 35, 'Prof. Adel', '2026-Fall', 'Threat modeling, secure coding, authentication, authorization, and application security.'),
+(28, 'SE308', 'Software Architecture', 'Software Engineering', 3, 35, 'Prof. Mona', '2026-Fall', 'Architectural styles, component design, scalability, maintainability, and system trade-offs.')
 ON DUPLICATE KEY UPDATE title=VALUES(title);
 
 -- Course Schedules
@@ -64,7 +68,11 @@ INSERT INTO course_schedules (schedule_id, course_id, day_of_week, start_period,
 (21, 21, 1, 5, 6, 'Learning Center L103'),
 (22, 22, 4, 5, 6, 'Humanities Hall H101'),
 (23, 23, 5, 1, 2, 'Business Hall H101'),
-(24, 24, 3, 5, 6, 'AI Innovation Lab A302')
+(24, 24, 3, 5, 6, 'AI Innovation Lab A302'),
+(25, 25, 1, 7, 8, 'Tech Building B305'),
+(26, 26, 2, 7, 8, 'Tech Building B306'),
+(27, 27, 3, 7, 8, 'Tech Building B307'),
+(28, 28, 4, 7, 8, 'Tech Building B308')
 ON DUPLICATE KEY UPDATE classroom=VALUES(classroom);
 
 -- Prerequisites
@@ -88,7 +96,11 @@ INSERT INTO course_prerequisites (course_id, prerequisite_course_id) VALUES
 (15, 6),
 (16, 6),
 (18, 9),
-(24, 3)
+(24, 3),
+(25, 6),
+(26, 14),
+(27, 6),
+(28, 14)
 ON DUPLICATE KEY UPDATE prerequisite_course_id=VALUES(prerequisite_course_id);
 
 -- Academic History (Past Completed Courses)
