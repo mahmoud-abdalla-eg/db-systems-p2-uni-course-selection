@@ -50,7 +50,7 @@ export default function CourseCard({ course, onEnroll, onDrop, loading }) {
       {!isSelectable && !isEnrolled && reason && (
         <div className="constraint-warning" role="status">
           <span aria-hidden="true">!</span>
-          <span>{reason}</span>
+          <span>Can't select: {reason}</span>
         </div>
       )}
 
@@ -65,7 +65,7 @@ export default function CourseCard({ course, onEnroll, onDrop, loading }) {
           </button>
         ) : (
           <button className="btn btn-primary" type="button" disabled={!isSelectable || loading} onClick={() => onEnroll(course.id)}>
-            {isSelectable ? "Select" : "Blocked"}
+            {isSelectable ? "Select" : "Can't select"}
           </button>
         )}
       </div>

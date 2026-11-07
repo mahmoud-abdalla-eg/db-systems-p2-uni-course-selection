@@ -100,6 +100,7 @@ public class Models {
 
         // Contextual fields for logged-in student
         public boolean isEnrolled = false;
+        public boolean isCompleted = false;
         public boolean isSelectable = true;
         public String unselectableReason = null;
     }

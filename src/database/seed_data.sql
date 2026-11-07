@@ -20,7 +20,21 @@ INSERT INTO courses (course_id, course_code, title, department, credits, capacit
 (7, 'SE302', 'Web Application Architecture', 'Software Engineering', 3, 35, 'Prof. Huang', '2026-Fall', 'Full-stack client-server paradigms, RESTful APIs, modern frontend frameworks, and security.'),
 (8, 'AI301', 'Artificial Intelligence & Machine Learning', 'Computer Science', 4, 30, 'Prof. Sun', '2026-Fall', 'Supervised learning, neural networks, backpropagation, and heuristic search algorithms.'),
 (9, 'MATH201', 'Linear Algebra & Matrix Computing', 'Mathematics', 3, 60, 'Prof. Wu', '2026-Fall', 'Matrix operations, eigenvalues, eigenvectors, vector spaces, and linear transformations.'),
-(10, 'GEN101', 'Academic English Communication', 'Foreign Languages', 2, 40, 'Prof. Miller', '2026-Fall', 'Scholarly presentation skills, academic writing, and cross-cultural technical discourse.')
+(10, 'GEN101', 'Academic English Communication', 'Foreign Languages', 2, 40, 'Prof. Miller', '2026-Fall', 'Scholarly presentation skills, academic writing, and cross-cultural technical discourse.'),
+(11, 'CS105', 'Object-Oriented Programming', 'Computer Science', 3, 45, 'Prof. Qian', '2026-Fall', 'Classes, inheritance, interfaces, exceptions, and reusable object-oriented design.'),
+(12, 'CS203', 'Operating Systems', 'Computer Science', 4, 40, 'Prof. Li', '2026-Fall', 'Processes, threads, memory management, file systems, and operating-system design.'),
+(13, 'CS305', 'Computer Networks', 'Computer Science', 3, 40, 'Prof. Gao', '2026-Fall', 'Network layers, routing, reliable transport, wireless networks, and internet protocols.'),
+(14, 'SE202', 'Requirements Engineering', 'Software Engineering', 3, 40, 'Prof. Ibrahim', '2026-Fall', 'Requirements discovery, modeling, validation, user stories, and traceability.'),
+(15, 'SE303', 'Software Testing and Quality', 'Software Engineering', 3, 35, 'Prof. Noor', '2026-Fall', 'Test planning, unit testing, integration testing, automation, and quality assurance.'),
+(16, 'SE304', 'DevOps and Cloud Delivery', 'Software Engineering', 3, 35, 'Prof. Farid', '2026-Fall', 'Continuous integration, deployment pipelines, containers, monitoring, and cloud delivery.'),
+(17, 'IS201', 'Business Information Systems', 'Information Systems', 3, 45, 'Prof. Hassan', '2026-Fall', 'How organizations use information systems for operations, decisions, and digital transformation.'),
+(18, 'DS201', 'Data Analytics', 'Data Science', 3, 40, 'Prof. Mei', '2026-Fall', 'Data preparation, exploratory analysis, visualization, and introductory predictive methods.'),
+(19, 'MATH202', 'Probability and Statistics', 'Mathematics', 3, 60, 'Prof. Xu', '2026-Fall', 'Probability models, distributions, estimation, hypothesis testing, and regression.'),
+(20, 'GEN102', 'Chinese Language and Culture', 'Foreign Languages', 2, 40, 'Prof. Liu', '2026-Fall', 'Practical Chinese communication and an introduction to Chinese culture and society.'),
+(21, 'GEN103', 'Academic Presentation', 'General Education', 2, 40, 'Prof. Park', '2026-Fall', 'Research presentation, public speaking, visual storytelling, and academic communication.'),
+(22, 'HUM101', 'Ethics in Technology', 'Humanities', 2, 45, 'Prof. Ahmed', '2026-Fall', 'Ethical reasoning about software, data, artificial intelligence, privacy, and society.'),
+(23, 'BUS101', 'Technology Entrepreneurship', 'Business', 3, 45, 'Prof. Karim', '2026-Fall', 'Opportunity discovery, business models, product validation, and technology ventures.'),
+(24, 'AI302', 'Data Mining', 'Computer Science', 3, 30, 'Prof. Sun', '2026-Fall', 'Data mining workflows, classification, clustering, association rules, and model evaluation.')
 ON DUPLICATE KEY UPDATE title=VALUES(title);
 
 -- Course Schedules
@@ -36,7 +50,21 @@ INSERT INTO course_schedules (schedule_id, course_id, day_of_week, start_period,
 (7, 7, 5, 3, 4, 'Tech Building B302'),     -- SE302: Fri Period 3-4
 (8, 8, 4, 1, 2, 'AI Innovation Lab A101'), -- AI301: Thu Period 1-2
 (9, 9, 2, 1, 2, 'Math Hall M201'),         -- MATH201: Tue Period 1-2
-(10, 10, 5, 1, 2, 'Language Center E101')  -- GEN101: Fri Period 1-2
+(10, 10, 5, 1, 2, 'Language Center E101'),  -- GEN101: Fri Period 1-2
+(11, 11, 2, 5, 6, 'Science Hall S105'),
+(12, 12, 3, 5, 6, 'Science Hall S203'),
+(13, 13, 4, 3, 4, 'Network Lab N301'),
+(14, 14, 1, 3, 4, 'Tech Building B202'),
+(15, 15, 4, 1, 2, 'Tech Building B303'),
+(16, 16, 5, 5, 6, 'Tech Building B304'),
+(17, 17, 2, 1, 2, 'Business Hall H201'),
+(18, 18, 3, 1, 2, 'Data Lab D201'),
+(19, 19, 2, 1, 2, 'Math Hall M202'),
+(20, 20, 5, 3, 4, 'Language Center E102'),
+(21, 21, 1, 5, 6, 'Learning Center L103'),
+(22, 22, 4, 5, 6, 'Humanities Hall H101'),
+(23, 23, 5, 1, 2, 'Business Hall H101'),
+(24, 24, 3, 5, 6, 'AI Innovation Lab A302')
 ON DUPLICATE KEY UPDATE classroom=VALUES(classroom);
 
 -- Prerequisites
@@ -52,7 +80,15 @@ INSERT INTO course_prerequisites (course_id, prerequisite_course_id) VALUES
 (5, 4),
 (6, 1),
 (7, 3),
-(8, 3)
+(8, 3),
+(11, 1),
+(12, 3),
+(13, 3),
+(14, 1),
+(15, 6),
+(16, 6),
+(18, 9),
+(24, 3)
 ON DUPLICATE KEY UPDATE prerequisite_course_id=VALUES(prerequisite_course_id);
 
 -- Academic History (Past Completed Courses)

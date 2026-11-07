@@ -22,6 +22,7 @@ public class SeedData {
 
         if (alreadySeeded) {
             syncDemoStudents(db);
+            ensureAdditionalCourses(db);
             return;
         }
 
@@ -104,6 +105,104 @@ public class SeedData {
         }
 
         syncDemoStudents(db);
+        ensureAdditionalCourses(db);
+    }
+
+    /** Adds more local catalog choices without requiring an external API at runtime. */
+    private static void ensureAdditionalCourses(Database db) throws SQLException {
+        try (Connection conn = db.getConnection()) {
+            String courseSql = """
+                INSERT INTO courses (id, course_code, title, department, credits, capacity, enrolled_count, instructor, semester, description)
+                SELECT ?, ?, ?, ?, ?, ?, 0, ?, ?, ?
+                WHERE NOT EXISTS (SELECT 1 FROM courses WHERE course_code = ?)
+            """;
+            try (PreparedStatement ps = conn.prepareStatement(courseSql)) {
+                String[][] courses = {
+                        {"11", "CS105", "Object-Oriented Programming", "Computer Science", "3", "45", "Prof. Qian", "2026-Fall", "Classes, inheritance, interfaces, exceptions, and reusable object-oriented design."},
+                        {"12", "CS203", "Operating Systems", "Computer Science", "4", "40", "Prof. Li", "2026-Fall", "Processes, threads, memory management, file systems, and operating-system design."},
+                        {"13", "CS305", "Computer Networks", "Computer Science", "3", "40", "Prof. Gao", "2026-Fall", "Network layers, routing, reliable transport, wireless networks, and internet protocols."},
+                        {"14", "SE202", "Requirements Engineering", "Software Engineering", "3", "40", "Prof. Ibrahim", "2026-Fall", "Requirements discovery, modeling, validation, user stories, and traceability."},
+                        {"15", "SE303", "Software Testing and Quality", "Software Engineering", "3", "35", "Prof. Noor", "2026-Fall", "Test planning, unit testing, integration testing, automation, and quality assurance."},
+                        {"16", "SE304", "DevOps and Cloud Delivery", "Software Engineering", "3", "35", "Prof. Farid", "2026-Fall", "Continuous integration, deployment pipelines, containers, monitoring, and cloud delivery."},
+                        {"17", "IS201", "Business Information Systems", "Information Systems", "3", "45", "Prof. Hassan", "2026-Fall", "How organizations use information systems for operations, decisions, and digital transformation."},
+                        {"18", "DS201", "Data Analytics", "Data Science", "3", "40", "Prof. Mei", "2026-Fall", "Data preparation, exploratory analysis, visualization, and introductory predictive methods."},
+                        {"19", "MATH202", "Probability and Statistics", "Mathematics", "3", "60", "Prof. Xu", "2026-Fall", "Probability models, distributions, estimation, hypothesis testing, and regression."},
+                        {"20", "GEN102", "Chinese Language and Culture", "Foreign Languages", "2", "40", "Prof. Liu", "2026-Fall", "Practical Chinese communication and an introduction to Chinese culture and society."},
+                        {"21", "GEN103", "Academic Presentation", "General Education", "2", "40", "Prof. Park", "2026-Fall", "Research presentation, public speaking, visual storytelling, and academic communication."},
+                        {"22", "HUM101", "Ethics in Technology", "Humanities", "2", "45", "Prof. Ahmed", "2026-Fall", "Ethical reasoning about software, data, artificial intelligence, privacy, and society."},
+                        {"23", "BUS101", "Technology Entrepreneurship", "Business", "3", "45", "Prof. Karim", "2026-Fall", "Opportunity discovery, business models, product validation, and technology ventures."},
+                        {"24", "AI302", "Data Mining", "Computer Science", "3", "30", "Prof. Sun", "2026-Fall", "Data mining workflows, classification, clustering, association rules, and model evaluation."}
+                };
+                for (String[] course : courses) {
+                    ps.setInt(1, Integer.parseInt(course[0]));
+                    ps.setString(2, course[1]);
+                    ps.setString(3, course[2]);
+                    ps.setString(4, course[3]);
+                    ps.setInt(5, Integer.parseInt(course[4]));
+                    ps.setInt(6, Integer.parseInt(course[5]));
+                    ps.setString(7, course[6]);
+                    ps.setString(8, course[7]);
+                    ps.setString(9, course[8]);
+                    ps.setString(10, course[1]);
+                    ps.executeUpdate();
+                }
+            }
+
+            String scheduleSql = """
+                INSERT INTO course_schedules (course_id, day_of_week, start_period, end_period, classroom)
+                SELECT c.id, ?, ?, ?, ? FROM courses c
+                WHERE c.course_code = ?
+                  AND NOT EXISTS (SELECT 1 FROM course_schedules s WHERE s.course_id = c.id)
+            """;
+            try (PreparedStatement ps = conn.prepareStatement(scheduleSql)) {
+                String[][] schedules = {
+                        {"CS105", "2", "5", "6", "Science Hall S105"},
+                        {"CS203", "3", "5", "6", "Science Hall S203"},
+                        {"CS305", "4", "3", "4", "Network Lab N301"},
+                        {"SE202", "1", "3", "4", "Tech Building B202"},
+                        {"SE303", "4", "1", "2", "Tech Building B303"},
+                        {"SE304", "5", "5", "6", "Tech Building B304"},
+                        {"IS201", "2", "1", "2", "Business Hall H201"},
+                        {"DS201", "3", "1", "2", "Data Lab D201"},
+                        {"MATH202", "2", "1", "2", "Math Hall M202"},
+                        {"GEN102", "5", "3", "4", "Language Center E102"},
+                        {"GEN103", "1", "5", "6", "Learning Center L103"},
+                        {"HUM101", "4", "5", "6", "Humanities Hall H101"},
+                        {"BUS101", "5", "1", "2", "Business Hall H101"},
+                        {"AI302", "3", "5", "6", "AI Innovation Lab A302"}
+                };
+                for (String[] schedule : schedules) {
+                    ps.setInt(1, Integer.parseInt(schedule[1]));
+                    ps.setInt(2, Integer.parseInt(schedule[2]));
+                    ps.setInt(3, Integer.parseInt(schedule[3]));
+                    ps.setString(4, schedule[4]);
+                    ps.setString(5, schedule[0]);
+                    ps.executeUpdate();
+                }
+            }
+
+            String prerequisiteSql = """
+                INSERT INTO course_prerequisites (course_id, prerequisite_course_id)
+                SELECT c.id, p.id FROM courses c CROSS JOIN courses p
+                WHERE c.course_code = ? AND p.course_code = ?
+                  AND NOT EXISTS (
+                      SELECT 1 FROM course_prerequisites cp
+                      WHERE cp.course_id = c.id AND cp.prerequisite_course_id = p.id
+                  )
+            """;
+            try (PreparedStatement ps = conn.prepareStatement(prerequisiteSql)) {
+                String[][] prerequisites = {
+                        {"CS105", "CS101"}, {"CS203", "CS201"}, {"CS305", "CS201"},
+                        {"SE202", "CS101"}, {"SE303", "SE201"}, {"SE304", "SE201"},
+                        {"DS201", "MATH201"}, {"AI302", "CS201"}
+                };
+                for (String[] prerequisite : prerequisites) {
+                    ps.setString(1, prerequisite[0]);
+                    ps.setString(2, prerequisite[1]);
+                    ps.executeUpdate();
+                }
+            }
+        }
     }
 
     /** Keeps the bundled demo accounts useful even when an older local DB already exists. */

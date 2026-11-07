@@ -132,13 +132,24 @@ export default function App() {
   const categoryCourses = courses.filter(course => {
     if (catalogCategory === "all") return true;
     if (catalogCategory === "major") {
-      return course.department.toLowerCase() === (user?.major || "").toLowerCase();
+      return course.department.toLowerCase() === (user?.major || "").toLowerCase() &&
+        !course.isCompleted && !course.isEnrolled;
     }
     return course.courseCode.startsWith("GEN") ||
-      course.department === "Foreign Languages" ||
-      course.department === "Mathematics";
+      ["Foreign Languages", "Mathematics", "General Education", "Humanities", "Business"].includes(course.department);
   });
-  const filteredCourses = categoryCourses.filter(course => {
+  const majorPrefix = user?.major === "Computer Science" ? "CS" : user?.major === "Software Engineering" ? "SE" : "";
+  const visibleCategoryCourses = catalogCategory === "major"
+    ? [...categoryCourses]
+      .sort((a, b) => {
+        const aPriority = majorPrefix && a.courseCode.startsWith(majorPrefix) ? 0 : 1;
+        const bPriority = majorPrefix && b.courseCode.startsWith(majorPrefix) ? 0 : 1;
+        return aPriority - bPriority || a.courseCode.localeCompare(b.courseCode);
+      })
+      .slice(0, 2)
+    : categoryCourses;
+  const departmentOptions = [...new Set(courses.map(course => course.department))].sort();
+  const filteredCourses = visibleCategoryCourses.filter(course => {
     const term = searchTerm.toLowerCase();
     const matchesSearch = course.title.toLowerCase().includes(term) ||
       course.courseCode.toLowerCase().includes(term) ||
@@ -254,10 +265,7 @@ export default function App() {
                   </label>
                   <select className="form-input department-select" aria-label="Filter courses by department" value={selectedDept} onChange={event => setSelectedDept(event.target.value)}>
                     <option value="ALL">All departments</option>
-                    <option value="Computer Science">Computer science</option>
-                    <option value="Software Engineering">Software engineering</option>
-                    <option value="Mathematics">Mathematics</option>
-                    <option value="Foreign Languages">Foreign languages</option>
+                    {departmentOptions.map(department => <option key={department} value={department}>{department}</option>)}
                   </select>
                 </div>
 

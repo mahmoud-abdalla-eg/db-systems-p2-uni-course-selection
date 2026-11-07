@@ -431,6 +431,9 @@ public class Database {
         Set<Integer> passedCourseIds = new HashSet<>();
         for (HistoryRecord h : history) {
             if ("PASSED".equalsIgnoreCase(h.status)) {
+                if (h.courseId == courseId) {
+                    throw new IllegalArgumentException("Can't select this course: it is already completed.");
+                }
                 passedCourseIds.add(h.courseId);
             }
         }
@@ -447,10 +450,7 @@ public class Database {
         // 4. [CONSTRAINT 2] Credit Limit Check (<= 21 credits)
         int currentCredits = getCurrentCredits(userId);
         if (currentCredits + target.credits > 21) {
-            throw new IllegalArgumentException(String.format(
-                    "Credit ceiling exceeded: Your current enrolled credits (%d) + course credits (%d) = %d credits, which exceeds the mandatory maximum limit of 21 credits per semester.",
-                    currentCredits, target.credits, (currentCredits + target.credits)
-            ));
+            throw new IllegalArgumentException("Can't select this course: it would exceed the 21-credit limit.");
         }
 
         // 5. [CONSTRAINT 3] Time Conflict Detection
@@ -556,7 +556,11 @@ public class Database {
 
         List<Course> allCourses = getAllCourses();
         for (Course c : allCourses) {
-            if (enrolledIds.contains(c.id)) {
+            if (passedCourseIds.contains(c.id)) {
+                c.isCompleted = true;
+                c.isSelectable = false;
+                c.unselectableReason = "Already completed";
+            } else if (enrolledIds.contains(c.id)) {
                 c.isEnrolled = true;
                 c.isSelectable = false;
                 c.unselectableReason = "Already selected";
@@ -565,8 +569,7 @@ public class Database {
                 c.unselectableReason = "Course section is full";
             } else if (dashboard.currentCredits + c.credits > 21) {
                 c.isSelectable = false;
-                c.unselectableReason = String.format("Exceeds 21 credit limit (%d + %d = %d)",
-                        dashboard.currentCredits, c.credits, dashboard.currentCredits + c.credits);
+                c.unselectableReason = "21-credit limit reached";
             } else {
                 // Check prerequisites
                 boolean missingPrereq = false;
