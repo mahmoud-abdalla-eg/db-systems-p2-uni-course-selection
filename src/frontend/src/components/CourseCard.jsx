@@ -49,8 +49,8 @@ export default function CourseCard({ course, onEnroll, onDrop, loading }) {
 
       {!isSelectable && !isEnrolled && reason && (
         <div className="constraint-warning" role="status">
-          <span aria-hidden="true">!</span>
-          <span>Can't select: {reason}</span>
+          <span className="constraint-dot" aria-hidden="true" />
+          <span>{reason}</span>
         </div>
       )}
 

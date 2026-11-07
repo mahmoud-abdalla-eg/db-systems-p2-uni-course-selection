@@ -2031,6 +2031,31 @@ body {
   }
 }
 
+/* Quiet inline explanation for unavailable courses */
+.constraint-warning {
+  display: flex;
+  align-items: center;
+  gap: 0.38rem;
+  margin-top: 0.25rem;
+  margin-bottom: 0.65rem;
+  padding: 0.48rem 0 0;
+  color: #806b45;
+  background: transparent;
+  border: 0;
+  border-top: 1px solid #eef1f5;
+  border-radius: 0;
+  font-size: 0.67rem;
+  font-weight: 600;
+}
+
+.constraint-dot {
+  flex: 0 0 auto;
+  width: 0.34rem;
+  height: 0.34rem;
+  background: #d08b1d;
+  border-radius: 50%;
+}
+
 /* Thin right-side utility rail */
 @media (min-width: 1101px) {
   .container {
