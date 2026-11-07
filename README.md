@@ -70,6 +70,8 @@ Or double-click:
 run\start-all.bat
 ```
 
+The launcher starts the backend and frontend in separate windows. On the first run, it installs the frontend dependencies automatically if Vite is not available.
+
 Then open:
 
 ```text
