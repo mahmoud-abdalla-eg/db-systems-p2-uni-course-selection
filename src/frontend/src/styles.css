@@ -2056,6 +2056,13 @@ body {
   border-radius: 50%;
 }
 
+@media (min-width: 721px) {
+  .catalog-toolbar .search-field {
+    flex: 1 1 32rem;
+    min-width: 20rem;
+  }
+}
+
 /* Thin right-side utility rail */
 @media (min-width: 1101px) {
   .container {

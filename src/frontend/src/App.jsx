@@ -198,7 +198,7 @@ export default function App() {
     })()
     : categoryCourses;
   const departmentOptions = [...new Set(courses.map(course => course.department))].sort();
-  const creditOptions = [...new Set(courses.map(course => course.credits))].sort((a, b) => a - b);
+  const creditOptions = [...new Set([0.5, 1, ...courses.map(course => course.credits)])].sort((a, b) => a - b);
   const filteredCourses = visibleCategoryCourses.filter(course => {
     const term = searchTerm.toLowerCase();
     const matchesSearch = course.title.toLowerCase().includes(term) ||
