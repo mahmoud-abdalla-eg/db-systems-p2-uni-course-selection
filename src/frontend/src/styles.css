@@ -1900,3 +1900,56 @@ body {
   .floating-side-nav { bottom: 0.65rem; }
   .floating-nav-icon { width: 1.6rem; height: 1.6rem; }
 }
+
+/* Denser course catalog cards */
+.course-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.7rem;
+}
+
+.course-card {
+  min-height: 0;
+  padding: 0.8rem;
+}
+
+.course-title {
+  font-size: 0.92rem;
+}
+
+.course-dept {
+  margin-bottom: 0.65rem;
+  font-size: 0.7rem;
+}
+
+.course-meta-row {
+  gap: 0.35rem;
+  margin-bottom: 0.65rem;
+  padding: 0.58rem;
+  font-size: 0.66rem;
+}
+
+.meta-label {
+  min-width: 3.35rem;
+}
+
+.course-footer {
+  padding-top: 0.6rem;
+}
+
+@media (min-width: 1600px) {
+  .course-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1100px) {
+  .course-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .course-grid {
+    grid-template-columns: 1fr;
+  }
+}
