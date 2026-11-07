@@ -4,7 +4,6 @@ import CourseCard from "./components/CourseCard";
 import MajorCurriculum from "./components/MajorCurriculum";
 import TimetableGrid from "./components/TimetableGrid";
 import AuthModal from "./components/AuthModal";
-import AcademicHistoryModal from "./components/AcademicHistoryModal";
 import { BookOpen, CalendarDays, CheckSquare, Info } from "lucide-react";
 import { api } from "./api";
 
@@ -52,7 +51,6 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
-  const [historyModalOpen, setHistoryModalOpen] = useState(false);
 
   useEffect(() => {
     if (!success) return undefined;
@@ -263,7 +261,6 @@ export default function App() {
         user={user}
         catalogCategory={catalogCategory}
         onCatalogChange={handleCatalogChange}
-        onOpenHistory={() => setHistoryModalOpen(true)}
         onLogout={handleLogout}
       />
 
@@ -331,6 +328,7 @@ export default function App() {
                     courses={majorCourses}
                     extras={majorCurriculumExtras}
                     requiredCodes={requiredCodes}
+                    studyYear={studyYear}
                     loading={loading}
                     onEnroll={handleEnroll}
                   />
@@ -433,7 +431,6 @@ export default function App() {
         </div>
       </main>
 
-      <AcademicHistoryModal isOpen={historyModalOpen} onClose={() => setHistoryModalOpen(false)} history={dashboard?.academicHistory || []} studentName={user?.name || ""} />
     </div>
   );
 }

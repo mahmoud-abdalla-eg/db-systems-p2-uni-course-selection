@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function Navbar({ user, catalogCategory, onCatalogChange, onOpenAuth, onLogout, onOpenHistory }) {
+export default function Navbar({ user, catalogCategory, onCatalogChange, onOpenAuth, onLogout }) {
   return (
     <header className="navbar">
       <a className="brand" href="#top" aria-label="University Course Selection home">
@@ -31,9 +31,6 @@ export default function Navbar({ user, catalogCategory, onCatalogChange, onOpenA
               <span className="user-name">{user.name}</span>
               <span className="user-meta">{user.userNo} &bull; {user.major}</span>
             </div>
-            <button className="btn btn-outline nav-action" type="button" onClick={onOpenHistory}>
-              Academic History
-            </button>
             <button className="btn btn-outline nav-action" type="button" onClick={onLogout}>
               Sign Out
             </button>
