@@ -1,0 +1,19 @@
+# Generated backend files
+bin/
+target/
+*.class
+courseforge.db
+
+# Generated frontend files
+node_modules/
+dist/
+
+# Submission and temporary files
+*.pdf
+*.docx
+*.zip
+*.rar
+*.log
+*.tmp
+*.bak
+Thumbs.db
