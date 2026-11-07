@@ -1,6 +1,6 @@
 @echo off
 REM =========================================================================
-REM  CourseForge - Backend Launcher
+REM  Uni Course Selection - Backend Launcher
 REM =========================================================================
 cd /d "%~dp0\..\src\backend"
 if not exist "bin" mkdir bin
@@ -19,6 +19,6 @@ if errorlevel 1 (
     exit /b 1
 )
 
-echo Starting CourseForge Relational Backend...
+echo Starting Uni Course Selection backend...
 java -cp "bin;lib/*" com.courseforge.Main
 pause

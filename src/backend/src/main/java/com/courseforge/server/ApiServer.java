@@ -26,7 +26,7 @@ public class ApiServer {
 
     public void start() {
         server.start();
-        System.out.printf("[SERVER] CourseForge API Server listening on http://localhost:%d%n", port);
+        System.out.printf("[SERVER] Uni Course Selection API listening on http://localhost:%d%n", port);
     }
 
     public void stop() {
@@ -48,23 +48,32 @@ public class ApiServer {
             if (method.equals("GET") && path.equals("/api/health")) {
                 Json.send(exchange, 200, Map.of(
                         "status", "ok",
-                        "app", "CourseForge Teaching Administration Management",
+                        "app", "Uni Course Selection",
                         "version", "1.0.0"
                 ));
             }
             // Auth
             else if (method.equals("POST") && path.equals("/api/auth/login")) {
                 LoginRequest req = Json.read(exchange, LoginRequest.class);
-                if (req == null || req.email == null || req.password == null) {
+                if (req == null || req.email == null || req.email.trim().isEmpty() || req.password == null || req.password.isEmpty()) {
                     throw new IllegalArgumentException("Email and password are required.");
+                }
+                if (req.password.length() < 6) {
+                    throw new IllegalArgumentException("Password must contain at least 6 characters.");
                 }
                 User user = authService.login(req.email, req.password);
                 Json.send(exchange, 200, user);
             }
             else if (method.equals("POST") && path.equals("/api/auth/register")) {
                 RegisterRequest req = Json.read(exchange, RegisterRequest.class);
-                if (req == null || req.email == null || req.password == null || req.name == null) {
-                    throw new IllegalArgumentException("Name, student number, email, and password are required.");
+                if (req == null || req.email == null || req.email.trim().isEmpty() || req.password == null || req.password.isEmpty() || req.name == null || req.name.trim().isEmpty()) {
+                    throw new IllegalArgumentException("Name, email, and password are required.");
+                }
+                if (req.password.length() < 6) {
+                    throw new IllegalArgumentException("Password must contain at least 6 characters.");
+                }
+                if (!req.email.contains("@")) {
+                    throw new IllegalArgumentException("Enter a valid email address.");
                 }
                 User user = database.createUser(
                         req.userNo != null ? req.userNo : "S" + System.currentTimeMillis() % 100000,
@@ -116,7 +125,7 @@ public class ApiServer {
                 // Return updated dashboard
                 StudentDashboard dashboard = database.getStudentDashboard(user.id);
                 Json.send(exchange, 200, Map.of(
-                        "message", "Successfully enrolled in course!",
+                        "message", "Course added to your selection.",
                         "dashboard", dashboard
                 ));
             }
@@ -131,7 +140,7 @@ public class ApiServer {
 
                 StudentDashboard dashboard = database.getStudentDashboard(user.id);
                 Json.send(exchange, 200, Map.of(
-                        "message", "Course successfully dropped.",
+                        "message", "Course removed from your selection.",
                         "dashboard", dashboard
                 ));
             }
@@ -143,8 +152,13 @@ public class ApiServer {
         } catch (SecurityException e) {
             Json.error(exchange, 401, e.getMessage());
         } catch (SQLException e) {
-            e.printStackTrace();
-            Json.error(exchange, 500, "Database error: " + e.getMessage());
+            String detail = e.getMessage() == null ? "" : e.getMessage().toLowerCase();
+            if (detail.contains("unique") || detail.contains("constraint")) {
+                Json.error(exchange, 409, "An account with that email or student number already exists.");
+            } else {
+                e.printStackTrace();
+                Json.error(exchange, 500, "Database error: " + e.getMessage());
+            }
         } catch (Exception e) {
             e.printStackTrace();
             Json.error(exchange, 500, "Server error: " + e.getMessage());

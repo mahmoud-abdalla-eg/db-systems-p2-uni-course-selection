@@ -19,7 +19,7 @@ public class SeedData {
                 return; // Already seeded
             }
 
-            System.out.println("[SEED] Database is empty. Seeding relational CourseForge data...");
+            System.out.println("[SEED] Database is empty. Seeding Uni Course Selection data...");
 
             // 1. Users
             stmt.execute("""
@@ -84,7 +84,7 @@ public class SeedData {
                 (2, 4, '2026-Spring', 'A', 'PASSED');
             """);
 
-            System.out.println("[SEED] Initial course data, schedules, and prerequisites loaded successfully.");
+            System.out.println("[SEED] Course data, schedules, and prerequisites loaded successfully.");
         }
     }
 }

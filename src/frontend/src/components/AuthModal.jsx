@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 export default function AuthModal({ isOpen, onClose, onLogin, onRegister }) {
   const [isRegister, setIsRegister] = useState(false);
@@ -10,21 +10,51 @@ export default function AuthModal({ isOpen, onClose, onLogin, onRegister }) {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    if (isOpen) setError(null);
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
-  async function handleSubmit(e) {
-    e.preventDefault();
+  function switchMode(registerMode) {
+    setIsRegister(registerMode);
     setError(null);
+  }
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+    setError(null);
+
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanName = name.trim();
+    const cleanUserNo = userNo.trim();
+    const cleanMajor = major.trim();
+
+    if (!cleanEmail || !password) {
+      setError("Enter your email and password.");
+      return;
+    }
+
+    if (password.length < 6) {
+      setError("Password must contain at least 6 characters.");
+      return;
+    }
+
+    if (isRegister && (!cleanName || !cleanUserNo || !cleanMajor)) {
+      setError("Complete your name, student number, and major.");
+      return;
+    }
+
     setLoading(true);
     try {
       if (isRegister) {
-        await onRegister({ email, password, name, userNo, major });
+        await onRegister({ email: cleanEmail, password, name: cleanName, userNo: cleanUserNo, major: cleanMajor });
       } else {
-        await onLogin(email, password);
+        await onLogin(cleanEmail, password);
       }
       onClose();
     } catch (err) {
-      setError(err.message);
+      setError(err.message || "Authentication failed. Try again.");
     } finally {
       setLoading(false);
     }
@@ -33,135 +63,80 @@ export default function AuthModal({ isOpen, onClose, onLogin, onRegister }) {
   function fillDemo(demoEmail, demoPass) {
     setEmail(demoEmail);
     setPassword(demoPass);
-    setIsRegister(false);
+    switchMode(false);
   }
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={e => e.stopPropagation()}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.25rem" }}>
-          <h2 style={{ fontSize: "1.25rem", fontWeight: "700" }}>
-            {isRegister ? "Student Registration" : "Student Portal Sign In"}
-          </h2>
-          <button className="btn btn-outline" style={{ padding: "0.2rem 0.5rem" }} onClick={onClose}>
-            &times;
-          </button>
+    <div className="modal-overlay" role="presentation" onClick={onClose}>
+      <section className="modal-content auth-modal" role="dialog" aria-modal="true" aria-labelledby="auth-title" onClick={event => event.stopPropagation()}>
+        <div className="modal-header">
+          <div>
+            <p className="kicker">Uni Course Selection</p>
+            <h2 id="auth-title">{isRegister ? "Create your student account" : "Welcome back"}</h2>
+          </div>
+          <button className="modal-close" type="button" onClick={onClose} aria-label="Close authentication dialog">&times;</button>
         </div>
 
-        {error && (
-          <div className="alert-box alert-error" style={{ marginBottom: "1rem" }}>
-            {error}
-          </div>
-        )}
+        <p className="auth-intro">
+          {isRegister ? "Create an account to save your course selection." : "Sign in to select courses and view your timetable."}
+        </p>
 
-        <form onSubmit={handleSubmit}>
+        {error && <div className="alert-box alert-error auth-error" role="alert">{error}</div>}
+
+        <form onSubmit={handleSubmit} noValidate>
           {isRegister && (
             <>
               <div className="form-group">
-                <label>Student Full Name</label>
-                <input
-                  type="text"
-                  className="form-input"
-                  required
-                  value={name}
-                  onChange={e => setName(e.target.value)}
-                  placeholder="e.g. Alex Chen"
-                />
+                <label htmlFor="student-name">Full name</label>
+                <input id="student-name" type="text" className="form-input" required value={name} onChange={event => setName(event.target.value)} placeholder="e.g. Alex Chen" autoComplete="name" />
               </div>
               <div className="form-group">
-                <label>Student ID Number</label>
-                <input
-                  type="text"
-                  className="form-input"
-                  required
-                  value={userNo}
-                  onChange={e => setUserNo(e.target.value)}
-                  placeholder="e.g. 2024101001"
-                />
+                <label htmlFor="student-number">Student number</label>
+                <input id="student-number" type="text" className="form-input" required value={userNo} onChange={event => setUserNo(event.target.value)} placeholder="e.g. 2024101001" autoComplete="off" />
               </div>
               <div className="form-group">
-                <label>Major / Degree Program</label>
-                <input
-                  type="text"
-                  className="form-input"
-                  required
-                  value={major}
-                  onChange={e => setMajor(e.target.value)}
-                />
+                <label htmlFor="student-major">Major</label>
+                <input id="student-major" type="text" className="form-input" required value={major} onChange={event => setMajor(event.target.value)} autoComplete="organization-title" />
               </div>
             </>
           )}
 
           <div className="form-group">
-            <label>Student Email Address</label>
-            <input
-              type="email"
-              className="form-input"
-              required
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              placeholder="e.g. alex.student@jnu.edu.cn"
-            />
+            <label htmlFor="student-email">Student email</label>
+            <input id="student-email" type="email" className="form-input" required value={email} onChange={event => setEmail(event.target.value)} placeholder="e.g. alex.student@jnu.edu.cn" autoComplete="email" />
           </div>
 
           <div className="form-group">
-            <label>Password</label>
-            <input
-              type="password"
-              className="form-input"
-              required
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              placeholder="••••••••"
-            />
+            <label htmlFor="student-password">Password</label>
+            <input id="student-password" type="password" className="form-input" required minLength={6} value={password} onChange={event => setPassword(event.target.value)} placeholder="At least 6 characters" autoComplete={isRegister ? "new-password" : "current-password"} />
           </div>
 
-          <button className="btn btn-primary" style={{ width: "100%", marginTop: "0.5rem" }} disabled={loading}>
-            {loading ? "Processing..." : isRegister ? "Create Student Account" : "Sign In to CourseForge"}
+          <button className="btn btn-primary auth-submit" type="submit" disabled={loading}>
+            {loading ? "Checking..." : isRegister ? "Create account" : "Sign in"}
           </button>
         </form>
 
-        <div style={{ textAlign: "center", marginTop: "1rem", fontSize: "0.85rem" }}>
+        <div className="auth-switch">
           {isRegister ? (
-            <span>
-              Already registered?{" "}
-              <button className="text-link" type="button" onClick={() => setIsRegister(false)}>
-                Sign In
-              </button>
-            </span>
+            <span>Already registered? <button className="text-link" type="button" onClick={() => switchMode(false)}>Sign in</button></span>
           ) : (
-            <span>
-              New student?{" "}
-              <button className="text-link" type="button" onClick={() => setIsRegister(true)}>
-                Register Account
-              </button>
-            </span>
+            <span>New student? <button className="text-link" type="button" onClick={() => switchMode(true)}>Create an account</button></span>
           )}
         </div>
 
-        {/* Demo Fast-Fill Accounts */}
-        <div className="demo-credentials">
-          <strong style={{ display: "block", marginBottom: "0.35rem" }}>Click to Autofill Demo Test Students:</strong>
-          <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem" }}>
-            <button
-              type="button"
-              className="btn btn-outline"
-              style={{ fontSize: "0.75rem", padding: "0.3rem 0.6rem", textAlign: "left", display: "block" }}
-              onClick={() => fillDemo("alex.student@jnu.edu.cn", "student123")}
-            >
-              1. <strong>Alex Chen</strong> (Passed CS101, CS102 &mdash; test prerequisite blocking on CS202)
+        {!isRegister && (
+          <div className="demo-credentials">
+            <strong>Demo accounts</strong>
+            <p>Use one of these to demonstrate the database rules.</p>
+            <button type="button" className="demo-account" onClick={() => fillDemo("alex.student@jnu.edu.cn", "student123")}>
+              <span>Alex Chen</span><small>Prerequisite checks</small>
             </button>
-            <button
-              type="button"
-              className="btn btn-outline"
-              style={{ fontSize: "0.75rem", padding: "0.3rem 0.6rem", textAlign: "left", display: "block" }}
-              onClick={() => fillDemo("maria.silva@jnu.edu.cn", "student123")}
-            >
-              2. <strong>Maria Silva</strong> (Passed CS101, CS102, CS201, CS202 &mdash; test credit limit / advanced)
+            <button type="button" className="demo-account" onClick={() => fillDemo("maria.silva@jnu.edu.cn", "student123")}>
+              <span>Maria Silva</span><small>Advanced and credit checks</small>
             </button>
           </div>
-        </div>
-      </div>
+        )}
+      </section>
     </div>
   );
 }

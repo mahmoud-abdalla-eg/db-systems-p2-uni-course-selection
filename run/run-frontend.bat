@@ -1,6 +1,6 @@
 @echo off
 REM =========================================================================
-REM  CourseForge - Frontend Launcher
+REM  Uni Course Selection - Frontend Launcher
 REM =========================================================================
 cd /d "%~dp0\..\src\frontend"
 if not exist "node_modules" (
@@ -12,6 +12,6 @@ if not exist "node_modules" (
         exit /b 1
     )
 )
-echo Starting CourseForge Vite React Frontend...
+echo Starting Uni Course Selection frontend...
 npm run dev
 pause

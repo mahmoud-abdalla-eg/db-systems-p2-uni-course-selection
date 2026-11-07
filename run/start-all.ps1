@@ -1,5 +1,5 @@
-# CourseForge - PowerShell Master Launcher
-Write-Host "Starting CourseForge..." -ForegroundColor Cyan
+# Uni Course Selection - PowerShell Master Launcher
+Write-Host "Starting Uni Course Selection..." -ForegroundColor Cyan
 Write-Host "Backend:  http://localhost:8080/api" -ForegroundColor Yellow
 Write-Host "Frontend: http://localhost:5173" -ForegroundColor Yellow
 

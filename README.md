@@ -1,6 +1,6 @@
-# Database Systems - Project 2: Course Selection System
+# Database Systems - Project 2: Uni Course Selection
 
-CourseForge is a small full-stack database application for the Database Systems class. It models course selection for a teaching-administration system and enforces the three required rules:
+Uni Course Selection is a small full-stack database application for the Database Systems class. It models course selection for a teaching-administration system and enforces the three required rules:
 
 1. Prerequisite courses must be passed before an advanced course can be selected.
 2. A student may select no more than 21 credits in one semester.
