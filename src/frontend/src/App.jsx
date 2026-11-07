@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Navbar from "./components/Navbar";
 import CreditProgressBar from "./components/CreditProgressBar";
 import CourseCard from "./components/CourseCard";
+import MajorCurriculum from "./components/MajorCurriculum";
 import TimetableGrid from "./components/TimetableGrid";
 import AuthModal from "./components/AuthModal";
 import AcademicHistoryModal from "./components/AcademicHistoryModal";
@@ -16,13 +17,26 @@ const tabs = [
 
 const categoryTitles = {
   all: "All courses",
-  major: "Recommended for your major",
-  elective: "General electives"
+  major: "Recommended this semester",
+  curriculum: "Major curriculum"
 };
 
 const requiredCourseCodesByMajor = {
   "Computer Science": ["CS101", "CS102", "CS105", "CS201", "CS202", "CS203", "CS305", "CS301"],
   "Software Engineering": ["SE201", "SE202", "SE302", "SE303", "SE304", "SE305", "SE306", "SE307", "SE308"]
+};
+
+const majorCurriculumExtrasByMajor = {
+  "Computer Science": [
+    { code: "CS390", title: "Industrial training / internship", credits: 2, requirement: "Professional requirement", term: "Later in degree" },
+    { code: "CS401", title: "Graduation thesis", credits: 10, requirement: "Final-year requirement", term: "Final year" },
+    { code: "CS402", title: "Graduation seminar", credits: 2, requirement: "Final-year requirement", term: "Final year" }
+  ],
+  "Software Engineering": [
+    { code: "SE390", title: "Industrial training / internship", credits: 2, requirement: "Professional requirement", term: "Later in degree" },
+    { code: "SE401", title: "Graduation thesis", credits: 10, requirement: "Final-year requirement", term: "Final year" },
+    { code: "SE402", title: "Software capstone project", credits: 4, requirement: "Final-year requirement", term: "Final year" }
+  ]
 };
 
 export default function App() {
@@ -147,31 +161,34 @@ export default function App() {
   const courses = dashboard?.selectableCourses || [];
   const currentCredits = dashboard?.currentCredits || 0;
   const maxCredits = dashboard?.maxCredits || 21;
-  const categoryCourses = courses.filter(course => {
-    if (catalogCategory === "all") return true;
-    if (catalogCategory === "major") {
-      return course.department.toLowerCase() === (user?.major || "").toLowerCase() &&
-        !course.isCompleted && !course.isEnrolled;
-    }
-    return course.courseCode.startsWith("GEN") ||
-      ["Foreign Languages", "Mathematics", "General Education", "Humanities", "Business"].includes(course.department);
-  });
   const requiredCodes = requiredCourseCodesByMajor[user?.major] || [];
+  const majorCourses = courses.filter(course => course.department.toLowerCase() === (user?.major || "").toLowerCase());
+  const selectableCourses = courses.filter(course => course.isSelectable && !course.isCompleted && !course.isEnrolled);
+  const categoryCourses = catalogCategory === "curriculum" ? majorCourses : courses;
   const visibleCategoryCourses = catalogCategory === "major"
     ? (() => {
-      const requiredPool = requiredCodes.length > 0
-        ? categoryCourses.filter(course => requiredCodes.includes(course.courseCode))
-        : categoryCourses;
       const order = new Map(requiredCodes.map((code, index) => [code, index]));
-      const orderedCourses = [...requiredPool].sort((a, b) =>
-        (order.get(a.courseCode) ?? 999) - (order.get(b.courseCode) ?? 999)
+      const requiredPool = selectableCourses.filter(course => requiredCodes.includes(course.courseCode));
+      const sameMajorPool = selectableCourses.filter(course =>
+        course.department.toLowerCase() === (user?.major || "").toLowerCase() && !requiredCodes.includes(course.courseCode)
       );
+      const optionalPool = selectableCourses.filter(course =>
+        !requiredCodes.includes(course.courseCode) && !sameMajorPool.includes(course)
+      );
+      const orderedCourses = [...requiredPool, ...sameMajorPool, ...optionalPool].sort((a, b) => {
+        const aPriority = requiredCodes.includes(a.courseCode) ? 0 : sameMajorPool.includes(a) ? 1 : 2;
+        const bPriority = requiredCodes.includes(b.courseCode) ? 0 : sameMajorPool.includes(b) ? 1 : 2;
+        return aPriority - bPriority ||
+          (order.get(a.courseCode) ?? 999) - (order.get(b.courseCode) ?? 999) ||
+          a.courseCode.localeCompare(b.courseCode);
+      });
       const recommendations = [];
       let recommendationCredits = 0;
+      const remainingCredits = Math.max(0, maxCredits - currentCredits);
       for (const course of orderedCourses) {
+        if (recommendationCredits >= remainingCredits) break;
         recommendations.push(course);
         recommendationCredits += course.credits;
-        if (recommendationCredits >= maxCredits) break;
       }
       return recommendations;
     })()
@@ -185,6 +202,10 @@ export default function App() {
     const matchesDept = selectedDept === "ALL" || course.department === selectedDept;
     return matchesSearch && matchesDept;
   });
+  const majorCurriculumExtras = majorCurriculumExtrasByMajor[user?.major] || [];
+  const shownCount = catalogCategory === "curriculum"
+    ? majorCourses.length + majorCurriculumExtras.length
+    : filteredCourses.length;
   const enrolledCourses = dashboard?.enrolledCourses || [];
   const cohortYear = Number.parseInt(String(user?.userNo || "").slice(0, 4), 10);
   const studyYear = Number.isFinite(cohortYear) && cohortYear >= 2020
@@ -262,7 +283,7 @@ export default function App() {
                 <p className="kicker">Course catalog</p>
                 <h2 id="catalog-title">{categoryTitles[catalogCategory]}</h2>
               </div>
-              <span className="count-label">{filteredCourses.length} section{filteredCourses.length === 1 ? "" : "s"} shown</span>
+              <span className="count-label">{shownCount} item{shownCount === 1 ? "" : "s"} shown</span>
             </div>
 
             <nav className="tabs-nav" aria-label="Student workspace views">
@@ -284,6 +305,17 @@ export default function App() {
 
             {activeTab === "available" && (
               <div>
+                {catalogCategory === "curriculum" ? (
+                  <MajorCurriculum
+                    major={user.major}
+                    courses={majorCourses}
+                    extras={majorCurriculumExtras}
+                    requiredCodes={requiredCodes}
+                    loading={loading}
+                    onEnroll={handleEnroll}
+                  />
+                ) : (
+                  <>
                 <div className="catalog-toolbar">
                   <label className="search-field">
                     <span aria-hidden="true">⌕</span>
@@ -302,7 +334,7 @@ export default function App() {
                 </div>
 
                 <div className="catalog-summary">
-                  <span>{catalogCategory === "major" ? `Required courses for ${user.major}, planned up to ${maxCredits} credits. Professional and general electives are optional.` : catalogCategory === "elective" ? "General education and elective sections." : "All open sections for the current semester, including other majors."}</span>
+                  <span>{catalogCategory === "major" ? `Courses you can select now for ${user.major}. Required courses come first; optional courses can fill the remaining credits.` : "All open sections for the current semester, including other majors and general electives."}</span>
                   {(searchTerm || selectedDept !== "ALL") && <button className="text-link" type="button" onClick={() => { setSearchTerm(""); setSelectedDept("ALL"); }}>Clear filters</button>}
                 </div>
 
@@ -317,6 +349,8 @@ export default function App() {
                       <CourseCard key={course.id} course={course} loading={loading} onEnroll={handleEnroll} onDrop={handleDrop} />
                     ))}
                   </div>
+                )}
+                  </>
                 )}
               </div>
             )}

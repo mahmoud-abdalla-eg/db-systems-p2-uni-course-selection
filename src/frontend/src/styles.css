@@ -1267,6 +1267,108 @@ body {
 .rule-row:first-child { border-top: 0; }
 .rule-row strong { display: block; margin-bottom: 0.12rem; font-size: 0.78rem; }
 
+.curriculum-view {
+  padding: 1.35rem 1.45rem 1.6rem;
+}
+
+.curriculum-intro {
+  max-width: 48rem;
+}
+
+.curriculum-intro h2 {
+  margin: 0.25rem 0 0.45rem;
+  font-size: clamp(1.35rem, 2vw, 1.8rem);
+  letter-spacing: -0.04em;
+}
+
+.curriculum-intro > p:not(.kicker) {
+  margin: 0;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.curriculum-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin-top: 1rem;
+}
+
+.curriculum-summary span {
+  padding: 0.45rem 0.65rem;
+  border: 1px solid #e5eaf1;
+  border-radius: 0.55rem;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+.curriculum-summary strong {
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+.curriculum-list {
+  display: grid;
+  gap: 0.6rem;
+  margin-top: 1.35rem;
+}
+
+.curriculum-row {
+  display: grid;
+  grid-template-columns: 5.4rem minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.85rem 0.95rem;
+  border: 1px solid #e8edf3;
+  border-radius: 0.7rem;
+  background: #fff;
+}
+
+.curriculum-milestone {
+  background: #f8fafc;
+  border-style: dashed;
+}
+
+.curriculum-code {
+  color: var(--primary);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.curriculum-copy {
+  display: grid;
+  gap: 0.18rem;
+  min-width: 0;
+}
+
+.curriculum-copy strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.84rem;
+}
+
+.curriculum-copy span,
+.curriculum-status {
+  color: var(--text-muted);
+  font-size: 0.72rem;
+}
+
+.curriculum-status {
+  white-space: nowrap;
+}
+
+.curriculum-status.complete { color: var(--success); }
+.curriculum-status.selected { color: var(--primary); }
+.curriculum-status.planned { color: #9a6700; }
+
+.curriculum-action {
+  min-width: 4.5rem;
+  padding: 0.45rem 0.7rem;
+  font-size: 0.72rem;
+}
+
 .alert-dismiss {
   padding: 0.15rem 0.4rem;
   color: currentColor;
@@ -1569,4 +1671,8 @@ body {
   .semester-status { grid-column: span 2; justify-self: start; }
   .auth-page { width: min(100% - 1rem, 560px); padding-top: 2rem; }
   .auth-welcome h1 { font-size: clamp(2.5rem, 14vw, 4rem); }
+  .curriculum-view { padding: 1rem; }
+  .curriculum-row { grid-template-columns: 4.6rem minmax(0, 1fr) auto; gap: 0.6rem; }
+  .curriculum-status { grid-column: 2; }
+  .curriculum-action { grid-column: 3; grid-row: 1 / span 2; }
 }

@@ -16,10 +16,10 @@ export default function Navbar({ user, catalogCategory, onCatalogChange, onOpenA
             All courses
           </button>
           <button className={`nav-link ${catalogCategory === "major" ? "active" : ""}`} type="button" onClick={() => onCatalogChange("major")}>
-            Recommended for major
+            Recommended this semester
           </button>
-          <button className={`nav-link ${catalogCategory === "elective" ? "active" : ""}`} type="button" onClick={() => onCatalogChange("elective")}>
-            General elective
+          <button className={`nav-link ${catalogCategory === "curriculum" ? "active" : ""}`} type="button" onClick={() => onCatalogChange("curriculum")}>
+            Major curriculum
           </button>
         </nav>
       )}
