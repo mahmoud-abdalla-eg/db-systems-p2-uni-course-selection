@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "./components/Navbar";
-import CreditProgressBar from "./components/CreditProgressBar";
 import CourseCard from "./components/CourseCard";
 import MajorCurriculum from "./components/MajorCurriculum";
 import TimetableGrid from "./components/TimetableGrid";
@@ -8,11 +7,11 @@ import AuthModal from "./components/AuthModal";
 import AcademicHistoryModal from "./components/AcademicHistoryModal";
 import { api } from "./api";
 
-const tabs = [
-  { id: "available", label: "Browse courses" },
-  { id: "enrolled", label: "My selection" },
-  { id: "timetable", label: "Timetable" },
-  { id: "rules", label: "Selection rules" }
+const workspaceLinks = [
+  { id: "available", label: "Courses", icon: "⌕" },
+  { id: "enrolled", label: "My selection", icon: "✓" },
+  { id: "timetable", label: "Timetable", icon: "▦" },
+  { id: "rules", label: "Rules", icon: "i" }
 ];
 
 const categoryTitles = {
@@ -213,6 +212,14 @@ export default function App() {
   const shownCount = catalogCategory === "curriculum"
     ? majorCourses.length + majorCurriculumExtras.length
     : filteredCourses.length;
+  const workspaceTitle = activeTab === "timetable"
+    ? "Timetable"
+    : activeTab === "rules"
+      ? "Selection rules"
+      : activeTab === "enrolled"
+        ? "My selected courses"
+        : categoryTitles[catalogCategory];
+  const workspaceKicker = activeTab === "available" ? "Course catalog" : "Current semester";
   const enrolledCourses = dashboard?.enrolledCourses || [];
   const cohortYear = Number.parseInt(String(user?.userNo || "").slice(0, 4), 10);
   const studyYear = Number.isFinite(cohortYear) && cohortYear >= 2020
@@ -283,30 +290,32 @@ export default function App() {
           <span className="semester-status"><span className="status-dot" aria-hidden="true" /> Registration open</span>
         </section>
 
+        <aside className="floating-side-nav" aria-label="Student workspace navigation">
+          {workspaceLinks.map(link => (
+            <button
+              key={link.id}
+              className={`floating-nav-item ${activeTab === link.id ? "active" : ""}`}
+              type="button"
+              title={link.label}
+              aria-label={link.label}
+              aria-current={activeTab === link.id ? "page" : undefined}
+              onClick={() => setActiveTab(link.id)}
+            >
+              <span className="floating-nav-icon" aria-hidden="true">{link.icon}</span>
+              <span>{link.label}</span>
+            </button>
+          ))}
+        </aside>
+
         <div className="workspace-layout">
           <section className="panel catalog-panel" aria-labelledby="catalog-title">
             <div className="panel-heading">
               <div>
-                <p className="kicker">Course catalog</p>
-                <h2 id="catalog-title">{categoryTitles[catalogCategory]}</h2>
+                <p className="kicker">{workspaceKicker}</p>
+                <h2 id="catalog-title">{workspaceTitle}</h2>
               </div>
-              <span className="count-label">{shownCount} item{shownCount === 1 ? "" : "s"} shown</span>
+              {activeTab === "available" && <span className="count-label">{shownCount} item{shownCount === 1 ? "" : "s"} shown</span>}
             </div>
-
-            <nav className="tabs-nav" aria-label="Student workspace views">
-              {tabs.map(tab => (
-                <button
-                  key={tab.id}
-                  className={`tab-btn ${activeTab === tab.id ? "active" : ""}`}
-                  type="button"
-                  aria-pressed={activeTab === tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                >
-                  {tab.label}
-                  {tab.id === "enrolled" ? ` (${enrolledCourses.length})` : ""}
-                </button>
-              ))}
-            </nav>
 
             {loading && courses.length === 0 && <div className="loading-state" role="status">Loading your course catalog...</div>}
 
@@ -393,10 +402,19 @@ export default function App() {
               </section>
             )}
 
-            {activeTab === "timetable" && <TimetableGrid enrolledCourses={enrolledCourses} />}
+            {activeTab === "timetable" && (
+              <section className="standalone-view" aria-labelledby="timetable-title">
+                <div className="standalone-heading">
+                  <p className="kicker">Current semester</p>
+                  <h2 id="timetable-title">Your timetable</h2>
+                  <p>See the courses in your selection arranged by day and period.</p>
+                </div>
+                <TimetableGrid enrolledCourses={enrolledCourses} />
+              </section>
+            )}
 
             {activeTab === "rules" && (
-              <section className="rules-view" aria-labelledby="rules-title">
+              <section className="standalone-view rules-view" aria-labelledby="rules-title">
                 <p className="kicker">Course planning</p>
                 <h2 id="rules-title">Selection rules</h2>
                 <p className="rules-intro">Each enrollment is checked before it is written to the database.</p>
@@ -408,28 +426,6 @@ export default function App() {
               </section>
             )}
           </section>
-
-          <aside className="selection-rail" aria-label="Current semester plan">
-            <section className="panel plan-panel">
-              <div className="plan-heading"><div><p className="rail-kicker">Current semester</p><h2>Your plan</h2></div><span className="term-badge">Fall 2026</span></div>
-              <CreditProgressBar currentCredits={currentCredits} maxCredits={maxCredits} enrolledCount={enrolledCourses.length} />
-              <div className="selected-heading"><h3>Selected courses</h3><span>{enrolledCourses.length} course{enrolledCourses.length === 1 ? "" : "s"}</span></div>
-              {enrolledCourses.length === 0 ? <div className="rail-empty">No courses selected yet.</div> : (
-                <div className="selected-course-list">
-                  {enrolledCourses.map(course => <div className="selected-course-item" key={course.id}><div><strong>{course.courseCode}</strong><span>{course.title}</span><small>{course.credits} credits</small></div><button className="remove-course" type="button" onClick={() => handleDrop(course.courseId)}>Remove</button></div>)}
-                </div>
-              )}
-              <div className="plan-note"><span>i</span> Every add is checked against prerequisites, the 21-credit ceiling, and timetable conflicts.</div>
-              <button className="btn btn-primary plan-action" type="button" onClick={() => setActiveTab("timetable")}>View timetable <span aria-hidden="true">→</span></button>
-            </section>
-
-            <section className="panel rules-mini">
-              <h2>What the system protects</h2>
-              <div className="mini-rule"><span>01</span><p><strong>Prerequisites</strong> are checked from academic history.</p></div>
-              <div className="mini-rule"><span>02</span><p>The semester stays under <strong>21 credits</strong>.</p></div>
-              <div className="mini-rule"><span>03</span><p>Overlapping class times are <strong>blocked</strong>.</p></div>
-            </section>
-          </aside>
         </div>
       </main>
 

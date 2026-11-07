@@ -1784,3 +1784,119 @@ body {
     margin-left: 0;
   }
 }
+
+/* Single workspace with persistent navigation */
+.workspace-layout {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.semester-bar {
+  position: sticky;
+  top: 4.1rem;
+  z-index: 40;
+  box-shadow: 0 10px 24px rgb(30 54 91 / 0.1);
+}
+
+.floating-side-nav {
+  position: fixed;
+  top: 50%;
+  left: max(0.75rem, calc((100vw - 1240px) / 2 - 4.75rem));
+  z-index: 45;
+  display: grid;
+  gap: 0.25rem;
+  padding: 0.35rem;
+  background: rgb(255 255 255 / 0.92);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: 0 12px 28px rgb(30 54 91 / 0.12);
+  backdrop-filter: blur(12px);
+  transform: translateY(-50%);
+}
+
+.floating-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 7.6rem;
+  padding: 0.58rem 0.65rem;
+  color: var(--text-muted);
+  background: transparent;
+  border: 0;
+  border-radius: 10px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-align: left;
+  transition: color 180ms ease, background 180ms ease, transform 180ms ease;
+}
+
+.floating-nav-item:hover {
+  color: var(--primary);
+  background: var(--primary-soft);
+}
+
+.floating-nav-item.active {
+  color: white;
+  background: var(--primary);
+  box-shadow: 0 5px 12px rgb(36 87 166 / 0.22);
+}
+
+.floating-nav-item:active { transform: translateY(1px); }
+
+.floating-nav-icon {
+  display: grid;
+  flex: 0 0 auto;
+  width: 1.45rem;
+  height: 1.45rem;
+  place-items: center;
+  border: 1px solid currentColor;
+  border-radius: 7px;
+  font-size: 0.72rem;
+  line-height: 1;
+}
+
+.standalone-view {
+  padding: 0.35rem 0 0;
+}
+
+.standalone-heading {
+  max-width: 44rem;
+  margin-bottom: 1.15rem;
+}
+
+.standalone-heading h2 {
+  margin-bottom: 0.35rem;
+  font-size: clamp(1.45rem, 3vw, 2rem);
+  letter-spacing: -0.045em;
+}
+
+.standalone-heading p:not(.kicker) {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+}
+
+.standalone-view .timetable-wrapper {
+  box-shadow: none;
+}
+
+@media (max-width: 1100px) {
+  .floating-side-nav {
+    top: auto;
+    bottom: 1rem;
+    left: 50%;
+    grid-auto-flow: column;
+    transform: translateX(-50%);
+  }
+
+  .floating-nav-item {
+    min-width: 0;
+    padding: 0.5rem;
+  }
+
+  .floating-nav-item > span:last-child { display: none; }
+}
+
+@media (max-width: 720px) {
+  .semester-bar { top: 6.6rem; }
+  .floating-side-nav { bottom: 0.65rem; }
+  .floating-nav-icon { width: 1.6rem; height: 1.6rem; }
+}
