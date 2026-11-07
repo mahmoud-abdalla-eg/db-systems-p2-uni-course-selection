@@ -3,9 +3,9 @@ import React from "react";
 export default function Navbar({ user, catalogCategory, onCatalogChange, onOpenAuth, onLogout, onOpenHistory }) {
   return (
     <header className="navbar">
-      <a className="brand" href="#top" aria-label="Uni Course Selection home">
+      <a className="brand" href="#top" aria-label="University Course Selection home">
         <div>
-          <span>Uni Course Selection</span>
+          <span>University Course Selection</span>
           <small>Student portal</small>
         </div>
       </a>

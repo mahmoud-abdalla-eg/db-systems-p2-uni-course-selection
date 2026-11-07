@@ -68,7 +68,7 @@ export default function AuthModal({ isOpen, onClose, onLogin, onRegister, embedd
       <section className={`modal-content auth-modal ${embedded ? "auth-page-card" : ""}`} role="dialog" aria-modal="true" aria-labelledby="auth-title" onClick={event => event.stopPropagation()}>
         <div className="modal-header">
           <div>
-            <p className="kicker">Uni Course Selection</p>
+            <p className="kicker">University Course Selection</p>
             <h2 id="auth-title">{isRegister ? "Create your student account" : "Welcome back"}</h2>
           </div>
           {!embedded && <button className="modal-close" type="button" onClick={onClose} aria-label="Close authentication dialog">&times;</button>}

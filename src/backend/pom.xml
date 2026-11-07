@@ -6,7 +6,7 @@
     <groupId>com.courseforge</groupId>
     <artifactId>courseforge-backend</artifactId>
     <version>1.0.0</version>
-    <name>Uni Course Selection Backend</name>
+    <name>University Course Selection Backend</name>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>

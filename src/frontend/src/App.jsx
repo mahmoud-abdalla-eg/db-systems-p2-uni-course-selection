@@ -275,7 +275,7 @@ export default function App() {
         )}
 
         <section className="semester-bar" aria-label="Semester summary">
-          <div className="semester-heading"><span className="kicker">Current registration</span><strong>Uni Course Selection</strong></div>
+          <div className="semester-heading"><span className="kicker">Current registration</span><strong>University Course Selection</strong></div>
           <div className="semester-item"><span>Semester</span><strong>Fall 2026</strong></div>
           <div className="semester-item"><span>Study year</span><strong>Year {studyYear}</strong></div>
           <div className="semester-item"><span>Selected credits</span><strong>{currentCredits} / {maxCredits}</strong></div>

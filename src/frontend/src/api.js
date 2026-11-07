@@ -22,7 +22,7 @@ async function request(endpoint, options = {}) {
       }
     });
   } catch {
-    throw new Error("Cannot connect to the Uni Course Selection backend. Start the backend and try again.");
+    throw new Error("Cannot connect to the University Course Selection backend. Start the backend and try again.");
   }
 
   const data = await res.json().catch(() => ({}));

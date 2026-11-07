@@ -26,7 +26,7 @@ public class ApiServer {
 
     public void start() {
         server.start();
-        System.out.printf("[SERVER] Uni Course Selection API listening on http://localhost:%d%n", port);
+        System.out.printf("[SERVER] University Course Selection API listening on http://localhost:%d%n", port);
     }
 
     public void stop() {
@@ -48,7 +48,7 @@ public class ApiServer {
             if (method.equals("GET") && path.equals("/api/health")) {
                 Json.send(exchange, 200, Map.of(
                         "status", "ok",
-                        "app", "Uni Course Selection",
+                        "app", "University Course Selection",
                         "version", "1.0.0"
                 ));
             }

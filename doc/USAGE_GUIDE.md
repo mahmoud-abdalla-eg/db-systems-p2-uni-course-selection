@@ -1,5 +1,5 @@
 # Database Systems (DBS) — Project 2 Usage & Architecture Guide
-## Topic: Uni Course Selection (Teaching Administration Management)
+## Topic: University Course Selection (Teaching Administration Management)
 
 * **Course**: Database Systems (DBS)  
 * **Institution**: Jinan University (JNU)  

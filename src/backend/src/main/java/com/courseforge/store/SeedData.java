@@ -27,7 +27,7 @@ public class SeedData {
         }
 
         try (Connection conn = db.getConnection(); Statement stmt = conn.createStatement()) {
-            System.out.println("[SEED] Database is empty. Seeding Uni Course Selection data...");
+            System.out.println("[SEED] Database is empty. Seeding University Course Selection data...");
 
             // 1. Users
             stmt.execute("""

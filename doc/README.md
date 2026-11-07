@@ -1,4 +1,4 @@
-# Uni Course Selection documentation
+# University Course Selection documentation
 
 This folder contains the usage and architecture guide for the Database Systems Project 2 course-selection application.
 
