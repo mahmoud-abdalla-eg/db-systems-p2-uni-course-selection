@@ -5,13 +5,14 @@ import MajorCurriculum from "./components/MajorCurriculum";
 import TimetableGrid from "./components/TimetableGrid";
 import AuthModal from "./components/AuthModal";
 import AcademicHistoryModal from "./components/AcademicHistoryModal";
+import { BookOpen, CalendarDays, CheckSquare, Info } from "lucide-react";
 import { api } from "./api";
 
 const workspaceLinks = [
-  { id: "available", label: "Courses", icon: "⌕" },
-  { id: "enrolled", label: "My selection", icon: "✓" },
-  { id: "timetable", label: "Timetable", icon: "▦" },
-  { id: "rules", label: "Rules", icon: "i" }
+  { id: "available", label: "Courses", icon: BookOpen },
+  { id: "enrolled", label: "My selection", icon: CheckSquare },
+  { id: "timetable", label: "Timetable", icon: CalendarDays },
+  { id: "rules", label: "Rules", icon: Info }
 ];
 
 const categoryTitles = {
@@ -291,20 +292,23 @@ export default function App() {
         </section>
 
         <aside className="floating-side-nav" aria-label="Student workspace navigation">
-          {workspaceLinks.map(link => (
-            <button
-              key={link.id}
-              className={`floating-nav-item ${activeTab === link.id ? "active" : ""}`}
-              type="button"
-              title={link.label}
-              aria-label={link.label}
-              aria-current={activeTab === link.id ? "page" : undefined}
-              onClick={() => setActiveTab(link.id)}
-            >
-              <span className="floating-nav-icon" aria-hidden="true">{link.icon}</span>
-              <span>{link.label}</span>
-            </button>
-          ))}
+          {workspaceLinks.map(link => {
+            const Icon = link.icon;
+            return (
+              <button
+                key={link.id}
+                className={`floating-nav-item ${activeTab === link.id ? "active" : ""}`}
+                type="button"
+                title={link.label}
+                aria-label={link.label}
+                aria-current={activeTab === link.id ? "page" : undefined}
+                onClick={() => setActiveTab(link.id)}
+              >
+                <span className="floating-nav-icon" aria-hidden="true"><Icon size={16} strokeWidth={1.8} /></span>
+                <span>{link.label}</span>
+              </button>
+            );
+          })}
         </aside>
 
         <div className="workspace-layout">

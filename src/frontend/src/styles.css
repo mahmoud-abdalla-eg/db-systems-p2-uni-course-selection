@@ -1953,3 +1953,58 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+/* Keep the utility rail in the right gutter on desktop */
+@media (min-width: 1101px) {
+  .container {
+    padding-right: 10.5rem;
+  }
+
+  .floating-side-nav {
+    top: 50%;
+    right: 1rem;
+    bottom: auto;
+    left: auto;
+    transform: translateY(-50%);
+  }
+}
+
+.floating-side-nav {
+  gap: 0.15rem;
+  padding: 0.45rem;
+  border-radius: 16px;
+  box-shadow: 0 14px 30px rgb(30 54 91 / 0.14);
+}
+
+.floating-nav-item {
+  min-width: 8.5rem;
+  padding: 0.62rem 0.7rem;
+  border-radius: 11px;
+  font-size: 0.74rem;
+  letter-spacing: -0.01em;
+}
+
+.floating-nav-item.active {
+  box-shadow: 0 6px 14px rgb(36 87 166 / 0.2);
+}
+
+.floating-nav-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 0;
+  border-radius: 7px;
+}
+
+@media (max-width: 1100px) {
+  .container {
+    padding-right: 0;
+  }
+
+  .floating-side-nav {
+    top: auto;
+    right: auto;
+    bottom: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
