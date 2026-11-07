@@ -50,24 +50,28 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (authReady && user) loadDashboard();
+    if (authReady && user) loadDashboard(user.id);
   }, [user, authReady]);
 
-  async function loadDashboard() {
+  async function loadDashboard(expectedUserId) {
     setLoading(true);
     try {
       const data = await api.getDashboard();
-      setDashboard(data);
-      setError(null);
+      const currentUser = api.getCurrentUser();
+      if (currentUser?.id === expectedUserId) {
+        setDashboard(data);
+        setError(null);
+      }
     } catch (err) {
-      setError(err.message);
+      if (api.getCurrentUser()?.id === expectedUserId) setError(err.message);
     } finally {
-      setLoading(false);
+      if (api.getCurrentUser()?.id === expectedUserId) setLoading(false);
     }
   }
 
   async function handleLogin(email, password) {
     const loggedIn = await api.login(email, password);
+    setDashboard(null);
     setUser(loggedIn);
     setError(null);
     setSuccess(`Welcome back, ${loggedIn.name}.`);
@@ -76,6 +80,7 @@ export default function App() {
 
   async function handleRegister(payload) {
     const registered = await api.register(payload);
+    setDashboard(null);
     setUser(registered);
     setError(null);
     setSuccess(`Account created. Welcome, ${registered.name}.`);

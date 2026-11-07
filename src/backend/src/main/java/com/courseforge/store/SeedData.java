@@ -250,6 +250,27 @@ public class SeedData {
                 insertHistory(ps, "li.wei@jnu.edu.cn", liWei);
                 insertHistory(ps, "omar.hassan@jnu.edu.cn", omarHassan);
             }
+
+            // Remove old demo selections that were invalid because the course was already passed.
+            try (Statement stmt = conn.createStatement()) {
+                stmt.executeUpdate("""
+                    DELETE FROM enrollments
+                    WHERE user_id IN (SELECT id FROM users WHERE email IN ('li.wei@jnu.edu.cn', 'omar.hassan@jnu.edu.cn'))
+                      AND EXISTS (
+                          SELECT 1 FROM student_course_history h
+                          WHERE h.user_id = enrollments.user_id
+                            AND h.course_id = enrollments.course_id
+                            AND h.status = 'PASSED'
+                      )
+                """);
+                stmt.executeUpdate("""
+                    UPDATE courses
+                    SET enrolled_count = (
+                        SELECT COUNT(*) FROM enrollments e
+                        WHERE e.course_id = courses.id AND e.status = 'ENROLLED'
+                    )
+                """);
+            }
         }
     }
 
