@@ -4,10 +4,10 @@
 
 -- Users
 INSERT INTO users (user_id, user_no, name, email, password, major, role) VALUES
-(1, '2024101001', 'Alex Chen', 'alex.student@jnu.edu.cn', 'student123', 'Computer Science', 'STUDENT'),
+(1, '2025101001', 'Alex Chen', 'alex.student@jnu.edu.cn', 'student123', 'Computer Science', 'STUDENT'),
 (2, '2024101002', 'Maria Silva', 'maria.silva@jnu.edu.cn', 'student123', 'Software Engineering', 'STUDENT'),
 (3, 'ADMIN001', 'Dean of Studies', 'admin@jnu.edu.cn', 'admin123', 'Teaching Affairs Office', 'ADMIN')
-ON DUPLICATE KEY UPDATE name=VALUES(name);
+ON DUPLICATE KEY UPDATE name=VALUES(name), user_no=VALUES(user_no);
 
 -- Courses
 INSERT INTO courses (course_id, course_code, title, department, credits, capacity, instructor, semester, description) VALUES
@@ -56,12 +56,21 @@ INSERT INTO course_prerequisites (course_id, prerequisite_course_id) VALUES
 ON DUPLICATE KEY UPDATE prerequisite_course_id=VALUES(prerequisite_course_id);
 
 -- Academic History (Past Completed Courses)
--- Alex Chen (user_id = 1) has passed CS101 and CS102
+-- Alex Chen (2025 cohort) has completed one academic year.
 INSERT INTO student_course_history (user_id, course_id, semester, grade, status) VALUES
 (1, 1, '2025-Fall', 'A', 'PASSED'),
-(1, 2, '2026-Spring', 'B+', 'PASSED'),
--- Maria Silva (user_id = 2) has passed CS101, CS102, CS201, CS202
-(2, 1, '2025-Fall', 'A', 'PASSED'),
-(2, 2, '2025-Fall', 'A-', 'PASSED'),
-(2, 3, '2026-Spring', 'A', 'PASSED'),
-(2, 4, '2026-Spring', 'A', 'PASSED');
+(1, 2, '2025-Fall', 'B+', 'PASSED'),
+(1, 9, '2026-Spring', 'B', 'PASSED'),
+(1, 10, '2026-Spring', 'A', 'PASSED'),
+(1, 6, '2026-Spring', 'B+', 'PASSED'),
+-- Maria Silva (2024 cohort) has completed two academic years.
+(2, 1, '2024-Fall', 'A', 'PASSED'),
+(2, 2, '2024-Fall', 'A-', 'PASSED'),
+(2, 9, '2024-Fall', 'B+', 'PASSED'),
+(2, 10, '2024-Fall', 'A', 'PASSED'),
+(2, 3, '2025-Spring', 'A', 'PASSED'),
+(2, 6, '2025-Spring', 'A-', 'PASSED'),
+(2, 4, '2025-Fall', 'A', 'PASSED'),
+(2, 7, '2025-Fall', 'B+', 'PASSED'),
+(2, 5, '2026-Spring', 'A', 'PASSED'),
+(2, 8, '2026-Spring', 'A-', 'PASSED');

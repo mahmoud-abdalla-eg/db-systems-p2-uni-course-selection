@@ -129,13 +129,15 @@ If any slot of $C_{\text{target}}$ collides with any slot of an already enrolled
 The relational database initializes with built-in test records demonstrating all constraints:
 
 ### Student 1: Alex Chen (`alex.student@jnu.edu.cn` / `student123`)
-* **Academic History**: Has passed `CS101` and `CS102`.
+* **Cohort**: 2025 (second year in the current 2026 fall term).
+* **Academic History**: Has completed one academic year: `CS101`, `CS102`, `MATH201`, `GEN101`, and `SE201`.
 * **Prerequisite Test**:
   * Select `CS201 Data Structures` $\rightarrow$ **Allowed** (prerequisite `CS101` is satisfied).
   * Try to select `CS202 Database Systems` $\rightarrow$ **Blocked** (requires `CS201`, which Alex hasn't completed).
 
 ### Student 2: Maria Silva (`maria.silva@jnu.edu.cn` / `student123`)
-* **Academic History**: Has passed `CS101`, `CS102`, `CS201`, `CS202`.
+* **Cohort**: 2024 (third year in the current 2026 fall term).
+* **Academic History**: Has completed two academic years, including `CS101`, `CS102`, `CS201`, `CS202`, `CS301`, `SE201`, `SE302`, `AI301`, `MATH201`, and `GEN101`.
 * **Advanced Prerequisite Test**:
   * Can select `CS301 Advanced Database` and `AI301 Machine Learning`.
 * **Time Conflict Test**:

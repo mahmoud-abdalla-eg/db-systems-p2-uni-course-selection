@@ -4,10 +4,9 @@ export default function Navbar({ user, catalogCategory, onCatalogChange, onOpenA
   return (
     <header className="navbar">
       <a className="brand" href="#top" aria-label="Uni Course Selection home">
-        <div className="brand-icon">CF</div>
         <div>
           <span>Uni Course Selection</span>
-          <small>Database Systems · Project 2</small>
+          <small>Database Systems · Student portal</small>
         </div>
       </a>
 

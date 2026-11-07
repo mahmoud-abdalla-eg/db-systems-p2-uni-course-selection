@@ -149,6 +149,10 @@ export default function App() {
   const enrolledCourses = dashboard?.enrolledCourses || [];
   const currentCredits = dashboard?.currentCredits || 0;
   const maxCredits = dashboard?.maxCredits || 21;
+  const cohortYear = Number.parseInt(String(user?.userNo || "").slice(0, 4), 10);
+  const studyYear = Number.isFinite(cohortYear) && cohortYear >= 2020
+    ? Math.min(4, Math.max(1, 2026 - cohortYear + 1))
+    : 1;
 
   if (!authReady) {
     return (
@@ -165,7 +169,7 @@ export default function App() {
         <Navbar user={null} />
         <main className="auth-page">
           <section className="auth-welcome">
-            <p className="eyebrow">Database Systems · Project 2</p>
+            <p className="eyebrow">Database Systems · Course planning</p>
             <h1>Choose courses with confidence.</h1>
             <p>Sign in to see courses for your major, plan your credits, and keep your timetable clear.</p>
             <div className="auth-points">
@@ -200,7 +204,7 @@ export default function App() {
 
         {success && (
           <div className="alert-box alert-success" role="status">
-            <span><strong>Done.</strong> {success}</span>
+            <span>{success}</span>
             <button className="alert-dismiss" type="button" onClick={() => setSuccess(null)} aria-label="Dismiss message">&times;</button>
           </div>
         )}
@@ -208,7 +212,7 @@ export default function App() {
         <section className="semester-bar" aria-label="Semester summary">
           <div className="semester-heading"><span className="kicker">Current registration</span><strong>Uni Course Selection</strong></div>
           <div className="semester-item"><span>Semester</span><strong>Fall 2026</strong></div>
-          <div className="semester-item"><span>Academic year</span><strong>2026–2027</strong></div>
+          <div className="semester-item"><span>Study year</span><strong>Year {studyYear}</strong></div>
           <div className="semester-item"><span>Selected credits</span><strong>{currentCredits} / {maxCredits}</strong></div>
           <div className="semester-item credits-left"><span>Credits left</span><strong>{Math.max(0, maxCredits - currentCredits)}</strong></div>
           <span className="semester-status"><span className="status-dot" aria-hidden="true" /> Registration open</span>
@@ -306,7 +310,7 @@ export default function App() {
 
             {activeTab === "rules" && (
               <section className="rules-view" aria-labelledby="rules-title">
-                <p className="kicker">Database Systems · Project 2</p>
+                <p className="kicker">Database Systems · Course planning</p>
                 <h2 id="rules-title">Selection rules</h2>
                 <p className="rules-intro">Each enrollment is checked before it is written to the database.</p>
                 <div className="rules-list">

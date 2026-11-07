@@ -16,6 +16,7 @@ public class SeedData {
         try (Connection conn = db.getConnection(); Statement stmt = conn.createStatement()) {
             ResultSet rs = stmt.executeQuery("SELECT COUNT(*) FROM users");
             if (rs.next() && rs.getInt(1) > 0) {
+                syncDemoStudents(db);
                 return; // Already seeded
             }
 
@@ -24,7 +25,7 @@ public class SeedData {
             // 1. Users
             stmt.execute("""
                 INSERT INTO users (user_no, name, email, password, major, role) VALUES
-                ('2024101001', 'Alex Chen', 'alex.student@jnu.edu.cn', 'student123', 'Computer Science', 'STUDENT'),
+                ('2025101001', 'Alex Chen', 'alex.student@jnu.edu.cn', 'student123', 'Computer Science', 'STUDENT'),
                 ('2024101002', 'Maria Silva', 'maria.silva@jnu.edu.cn', 'student123', 'Software Engineering', 'STUDENT'),
                 ('ADMIN001', 'Dean of Studies', 'admin@jnu.edu.cn', 'admin123', 'Teaching Affairs Office', 'ADMIN');
             """);
@@ -72,19 +73,108 @@ public class SeedData {
             """);
 
             // 5. Academic History
-            // Alex Chen (id=1) has passed CS101 and CS102
-            // Maria Silva (id=2) has passed CS101, CS102, CS201, CS202
+            // Alex Chen is a 2025 cohort student: one completed academic year.
+            // Maria Silva is a 2024 cohort student: two completed academic years.
             stmt.execute("""
                 INSERT INTO student_course_history (user_id, course_id, semester, grade, status) VALUES
                 (1, 1, '2025-Fall', 'A', 'PASSED'),
-                (1, 2, '2026-Spring', 'B+', 'PASSED'),
-                (2, 1, '2025-Fall', 'A', 'PASSED'),
-                (2, 2, '2025-Fall', 'A-', 'PASSED'),
-                (2, 3, '2026-Spring', 'A', 'PASSED'),
-                (2, 4, '2026-Spring', 'A', 'PASSED');
+                (1, 2, '2025-Fall', 'B+', 'PASSED'),
+                (1, 9, '2026-Spring', 'B', 'PASSED'),
+                (1, 10, '2026-Spring', 'A', 'PASSED'),
+                (1, 6, '2026-Spring', 'B+', 'PASSED'),
+                (2, 1, '2024-Fall', 'A', 'PASSED'),
+                (2, 2, '2024-Fall', 'A-', 'PASSED'),
+                (2, 9, '2024-Fall', 'B+', 'PASSED'),
+                (2, 10, '2024-Fall', 'A', 'PASSED'),
+                (2, 3, '2025-Spring', 'A', 'PASSED'),
+                (2, 6, '2025-Spring', 'A-', 'PASSED'),
+                (2, 4, '2025-Fall', 'A', 'PASSED'),
+                (2, 7, '2025-Fall', 'B+', 'PASSED'),
+                (2, 5, '2026-Spring', 'A', 'PASSED'),
+                (2, 8, '2026-Spring', 'A-', 'PASSED');
             """);
 
             System.out.println("[SEED] Course data, schedules, and prerequisites loaded successfully.");
+        }
+
+        syncDemoStudents(db);
+    }
+
+    /** Keeps the bundled demo accounts useful even when an older local DB already exists. */
+    private static void syncDemoStudents(Database db) throws SQLException {
+        try (Connection conn = db.getConnection()) {
+            try (PreparedStatement ps = conn.prepareStatement("UPDATE users SET user_no = ?, name = ?, password = ?, major = ?, role = 'STUDENT' WHERE email = ?")) {
+                ps.setString(1, "2025101001");
+                ps.setString(2, "Alex Chen");
+                ps.setString(3, "student123");
+                ps.setString(4, "Computer Science");
+                ps.setString(5, "alex.student@jnu.edu.cn");
+                ps.executeUpdate();
+                ps.setString(1, "2024101002");
+                ps.setString(2, "Maria Silva");
+                ps.setString(3, "student123");
+                ps.setString(4, "Software Engineering");
+                ps.setString(5, "maria.silva@jnu.edu.cn");
+                ps.executeUpdate();
+            }
+
+            ensureDemoUser(conn, "2025101001", "Alex Chen", "alex.student@jnu.edu.cn", "Computer Science");
+            ensureDemoUser(conn, "2024101002", "Maria Silva", "maria.silva@jnu.edu.cn", "Software Engineering");
+
+            try (Statement stmt = conn.createStatement()) {
+                stmt.executeUpdate("DELETE FROM student_course_history WHERE user_id IN (SELECT id FROM users WHERE email IN ('alex.student@jnu.edu.cn', 'maria.silva@jnu.edu.cn'))");
+            }
+
+            String historySql = """
+                INSERT INTO student_course_history (user_id, course_id, semester, grade, status)
+                SELECT id, ?, ?, ?, ? FROM users WHERE email = ?
+            """;
+            try (PreparedStatement ps = conn.prepareStatement(historySql)) {
+                String[][] alex = {
+                        {"1", "2025-Fall", "A"}, {"2", "2025-Fall", "B+"},
+                        {"9", "2026-Spring", "B"}, {"10", "2026-Spring", "A"},
+                        {"6", "2026-Spring", "B+"}
+                };
+                String[][] maria = {
+                        {"1", "2024-Fall", "A"}, {"2", "2024-Fall", "A-"},
+                        {"9", "2024-Fall", "B+"}, {"10", "2024-Fall", "A"},
+                        {"3", "2025-Spring", "A"}, {"6", "2025-Spring", "A-"},
+                        {"4", "2025-Fall", "A"}, {"7", "2025-Fall", "B+"},
+                        {"5", "2026-Spring", "A"}, {"8", "2026-Spring", "A-"}
+                };
+                insertHistory(ps, "alex.student@jnu.edu.cn", alex);
+                insertHistory(ps, "maria.silva@jnu.edu.cn", maria);
+            }
+        }
+    }
+
+    private static void insertHistory(PreparedStatement ps, String email, String[][] records) throws SQLException {
+        for (String[] record : records) {
+            ps.setInt(1, Integer.parseInt(record[0]));
+            ps.setString(2, record[1]);
+            ps.setString(3, record[2]);
+            ps.setString(4, "PASSED");
+            ps.setString(5, email);
+            ps.addBatch();
+        }
+        ps.executeBatch();
+        ps.clearBatch();
+    }
+
+    private static void ensureDemoUser(Connection conn, String userNo, String name, String email, String major) throws SQLException {
+        try (PreparedStatement check = conn.prepareStatement("SELECT 1 FROM users WHERE email = ?")) {
+            check.setString(1, email);
+            try (ResultSet rs = check.executeQuery()) {
+                if (rs.next()) return;
+            }
+        }
+        try (PreparedStatement insert = conn.prepareStatement("INSERT INTO users (user_no, name, email, password, major, role) VALUES (?, ?, ?, ?, ?, 'STUDENT')")) {
+            insert.setString(1, userNo);
+            insert.setString(2, name);
+            insert.setString(3, email);
+            insert.setString(4, "student123");
+            insert.setString(5, major);
+            insert.executeUpdate();
         }
     }
 }

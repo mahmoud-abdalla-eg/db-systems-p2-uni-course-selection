@@ -56,7 +56,7 @@ export const api = {
       body: JSON.stringify({
         ...payload,
         name: payload.name.trim(),
-        userNo: payload.userNo.trim(),
+        userNo: payload.userNo?.trim() || "",
         email: payload.email.trim().toLowerCase(),
         major: payload.major.trim()
       })

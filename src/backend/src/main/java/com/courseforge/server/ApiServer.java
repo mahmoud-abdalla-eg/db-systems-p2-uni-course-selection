@@ -75,8 +75,12 @@ public class ApiServer {
                 if (!req.email.contains("@")) {
                     throw new IllegalArgumentException("Enter a valid email address.");
                 }
+                String requestedUserNo = req.userNo == null ? "" : req.userNo.trim();
+                String studentNumber = requestedUserNo.isEmpty()
+                        ? database.generateStudentNumber("2026")
+                        : requestedUserNo;
                 User user = database.createUser(
-                        req.userNo != null ? req.userNo : "S" + System.currentTimeMillis() % 100000,
+                        studentNumber,
                         req.name,
                         req.email,
                         req.password,

@@ -206,6 +206,22 @@ public class Database {
         throw new SQLException("Failed to create user.");
     }
 
+    /** Generates an unused student number for the current 2026 intake. */
+    public String generateStudentNumber(String cohortPrefix) throws SQLException {
+        long start = Math.abs(System.currentTimeMillis()) % 1_000_000L;
+        String sql = "SELECT 1 FROM users WHERE user_no = ?";
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            for (int attempt = 0; attempt < 1000; attempt++) {
+                String candidate = cohortPrefix + String.format("%06d", (start + attempt) % 1_000_000L);
+                ps.setString(1, candidate);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (!rs.next()) return candidate;
+                }
+            }
+        }
+        throw new SQLException("Could not generate a unique student number.");
+    }
+
     // -------------------------------------------------------------
     // Courses, Schedules, Prerequisites
     // -------------------------------------------------------------

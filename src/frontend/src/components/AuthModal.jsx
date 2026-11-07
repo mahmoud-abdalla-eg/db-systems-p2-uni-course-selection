@@ -5,7 +5,6 @@ export default function AuthModal({ isOpen, onClose, onLogin, onRegister, embedd
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
-  const [userNo, setUserNo] = useState("");
   const [major, setMajor] = useState("Computer Science");
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -27,7 +26,6 @@ export default function AuthModal({ isOpen, onClose, onLogin, onRegister, embedd
 
     const cleanEmail = email.trim().toLowerCase();
     const cleanName = name.trim();
-    const cleanUserNo = userNo.trim();
     const cleanMajor = major.trim();
 
     if (!cleanEmail || !password) {
@@ -40,15 +38,15 @@ export default function AuthModal({ isOpen, onClose, onLogin, onRegister, embedd
       return;
     }
 
-    if (isRegister && (!cleanName || !cleanUserNo || !cleanMajor)) {
-      setError("Complete your name, student number, and major.");
+    if (isRegister && (!cleanName || !cleanMajor)) {
+      setError("Complete your name and major.");
       return;
     }
 
     setLoading(true);
     try {
       if (isRegister) {
-        await onRegister({ email: cleanEmail, password, name: cleanName, userNo: cleanUserNo, major: cleanMajor });
+        await onRegister({ email: cleanEmail, password, name: cleanName, major: cleanMajor });
       } else {
         await onLogin(cleanEmail, password);
       }
@@ -90,10 +88,6 @@ export default function AuthModal({ isOpen, onClose, onLogin, onRegister, embedd
                 <input id="student-name" type="text" className="form-input" required value={name} onChange={event => setName(event.target.value)} placeholder="e.g. Alex Chen" autoComplete="name" />
               </div>
               <div className="form-group">
-                <label htmlFor="student-number">Student number</label>
-                <input id="student-number" type="text" className="form-input" required value={userNo} onChange={event => setUserNo(event.target.value)} placeholder="e.g. 2024101001" autoComplete="off" />
-              </div>
-              <div className="form-group">
                 <label htmlFor="student-major">Major</label>
                 <input id="student-major" type="text" className="form-input" required value={major} onChange={event => setMajor(event.target.value)} autoComplete="organization-title" />
               </div>
@@ -128,10 +122,10 @@ export default function AuthModal({ isOpen, onClose, onLogin, onRegister, embedd
             <strong>Demo accounts</strong>
             <p>Use one of these to demonstrate the database rules.</p>
             <button type="button" className="demo-account" onClick={() => fillDemo("alex.student@jnu.edu.cn", "student123")}>
-              <span>Alex Chen</span><small>Prerequisite checks</small>
+              <span>Alex Chen</span><small>2025 cohort · second year</small>
             </button>
             <button type="button" className="demo-account" onClick={() => fillDemo("maria.silva@jnu.edu.cn", "student123")}>
-              <span>Maria Silva</span><small>Advanced and credit checks</small>
+              <span>Maria Silva</span><small>2024 cohort · third year</small>
             </button>
           </div>
         )}

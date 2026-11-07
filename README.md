@@ -78,7 +78,7 @@ http://localhost:5173
 
 The backend runs at `http://localhost:8080/api` and exposes a health endpoint at `http://localhost:8080/api/health`.
 
-The first run creates and seeds `src/backend/courseforge.db`. The application opens on a sign-in/register page and includes demo students so the prerequisite, credit-limit, and schedule-conflict rules can be demonstrated quickly.
+The first run creates and seeds `src/backend/courseforge.db`. The application opens on a sign-in/register page and includes demo students so the prerequisite, credit-limit, and schedule-conflict rules can be demonstrated quickly. Alex Chen is a 2025-cohort second-year student with one completed year; Maria Silva is a 2024-cohort third-year student with two completed years. New registrations automatically receive a 2026-cohort student number and start with no previous-course history.
 
 ## Manual Run
 

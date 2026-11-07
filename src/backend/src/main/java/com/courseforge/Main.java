@@ -6,8 +6,8 @@ import com.courseforge.store.Database;
 public class Main {
     public static void main(String[] args) {
         System.out.println("==================================================================");
-        System.out.println("  Uni Course Selection: Database Systems Project 2             ");
-        System.out.println("                     Project Two for DBS                          ");
+        System.out.println("  Uni Course Selection: Student Course Planning                 ");
+        System.out.println("                     Database Systems Portal                    ");
         System.out.println("==================================================================");
 
         try {
