@@ -135,7 +135,15 @@ public class SeedData {
                         {"25", "SE305", "Software Project Management", "Software Engineering", "3", "35", "Prof. Youssef", "2026-Fall", "Planning, estimation, risk management, teamwork, and delivery tracking for software projects."},
                         {"26", "SE306", "Human-Computer Interaction", "Software Engineering", "3", "40", "Prof. Sara", "2026-Fall", "User research, interaction design, prototyping, usability testing, and accessible interfaces."},
                         {"27", "SE307", "Secure Software Development", "Software Engineering", "3", "35", "Prof. Adel", "2026-Fall", "Threat modeling, secure coding, authentication, authorization, and application security."},
-                        {"28", "SE308", "Software Architecture", "Software Engineering", "3", "35", "Prof. Mona", "2026-Fall", "Architectural styles, component design, scalability, maintainability, and system trade-offs."}
+                        {"28", "SE308", "Software Architecture", "Software Engineering", "3", "35", "Prof. Mona", "2026-Fall", "Architectural styles, component design, scalability, maintainability, and system trade-offs."},
+                        {"29", "ECON101", "Introduction to Economics", "Economics", "3", "50", "Prof. Wang", "2026-Fall", "Markets, incentives, supply and demand, public policy, and economic decision-making."},
+                        {"30", "LAW101", "Digital Law and Society", "Law", "2", "45", "Prof. Rahman", "2026-Fall", "Digital rights, contracts, intellectual property, privacy, and responsible technology use."},
+                        {"31", "PHY101", "University Physics", "Physics", "3", "50", "Prof. Zhou", "2026-Fall", "Motion, energy, waves, electricity, and physical reasoning for university study."},
+                        {"32", "BIO101", "Introduction to Biology", "Life Sciences", "3", "45", "Prof. Chen", "2026-Fall", "Cells, genetics, evolution, ecosystems, and the biological sciences."},
+                        {"33", "ART101", "Digital Media Design", "Arts", "2", "35", "Prof. Nabil", "2026-Fall", "Visual composition, digital storytelling, typography, and design practice."},
+                        {"34", "PSY101", "Psychology and Learning", "Social Sciences", "3", "50", "Prof. Ahmed", "2026-Fall", "Learning, memory, motivation, social behavior, and human development."},
+                        {"35", "CHEM101", "General Chemistry", "Chemistry", "3", "45", "Prof. Li", "2026-Fall", "Matter, reactions, bonding, energy, and quantitative chemical reasoning."},
+                        {"36", "LANG101", "Arabic Language and Culture", "Foreign Languages", "2", "40", "Prof. Omar", "2026-Fall", "Practical Arabic communication and an introduction to Arabic-speaking cultures."}
                 };
                 for (String[] course : courses) {
                     ps.setInt(1, Integer.parseInt(course[0]));
@@ -177,7 +185,15 @@ public class SeedData {
                         {"SE305", "1", "7", "8", "Tech Building B305"},
                         {"SE306", "2", "7", "8", "Tech Building B306"},
                         {"SE307", "3", "7", "8", "Tech Building B307"},
-                        {"SE308", "4", "7", "8", "Tech Building B308"}
+                        {"SE308", "4", "7", "8", "Tech Building B308"},
+                        {"ECON101", "1", "7", "8", "Economics Hall E101"},
+                        {"LAW101", "2", "5", "6", "Law Hall L101"},
+                        {"PHY101", "3", "7", "8", "Science Hall P101"},
+                        {"BIO101", "4", "7", "8", "Life Sciences B101"},
+                        {"ART101", "5", "7", "8", "Arts Studio A101"},
+                        {"PSY101", "1", "3", "4", "Social Sciences S101"},
+                        {"CHEM101", "2", "7", "8", "Science Hall C101"},
+                        {"LANG101", "3", "7", "8", "Language Center E103"}
                 };
                 for (String[] schedule : schedules) {
                     ps.setInt(1, Integer.parseInt(schedule[1]));

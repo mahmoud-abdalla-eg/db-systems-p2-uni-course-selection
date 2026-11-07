@@ -821,7 +821,8 @@ body {
 
 .search-field {
   position: relative;
-  flex: 1;
+  flex: 0 1 18rem;
+  min-width: 13rem;
 }
 
 .search-field > span {
@@ -840,6 +841,14 @@ body {
 
 .department-select {
   width: 190px;
+}
+
+.day-select {
+  width: 135px;
+}
+
+.credit-select {
+  width: 125px;
 }
 
 .rule-strip {
@@ -1472,7 +1481,7 @@ body {
   .catalog-panel { padding: 0.85rem; }
   .panel-heading { align-items: flex-start; flex-direction: column; gap: 0.4rem; }
   .catalog-toolbar { flex-direction: column; }
-  .department-select { width: 100%; }
+  .search-field, .department-select, .day-select, .credit-select { width: 100%; }
   .rule-strip { grid-template-columns: 1fr; }
   .selection-rail { grid-template-columns: 1fr; }
   .selection-heading { align-items: flex-start; flex-direction: column; gap: 0.4rem; }

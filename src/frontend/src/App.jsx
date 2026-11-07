@@ -47,6 +47,8 @@ export default function App() {
   const [catalogCategory, setCatalogCategory] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDept, setSelectedDept] = useState("ALL");
+  const [selectedDay, setSelectedDay] = useState("ALL");
+  const [selectedCredits, setSelectedCredits] = useState("ALL");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
@@ -126,6 +128,8 @@ export default function App() {
     setActiveTab("available");
     setSearchTerm("");
     setSelectedDept("ALL");
+    setSelectedDay("ALL");
+    setSelectedCredits("ALL");
   }
 
   async function handleEnroll(courseId) {
@@ -194,13 +198,16 @@ export default function App() {
     })()
     : categoryCourses;
   const departmentOptions = [...new Set(courses.map(course => course.department))].sort();
+  const creditOptions = [...new Set(courses.map(course => course.credits))].sort((a, b) => a - b);
   const filteredCourses = visibleCategoryCourses.filter(course => {
     const term = searchTerm.toLowerCase();
     const matchesSearch = course.title.toLowerCase().includes(term) ||
       course.courseCode.toLowerCase().includes(term) ||
       course.instructor.toLowerCase().includes(term);
     const matchesDept = selectedDept === "ALL" || course.department === selectedDept;
-    return matchesSearch && matchesDept;
+    const matchesDay = selectedDay === "ALL" || course.schedules?.some(schedule => String(schedule.dayOfWeek) === selectedDay);
+    const matchesCredits = selectedCredits === "ALL" || String(course.credits) === selectedCredits;
+    return matchesSearch && matchesDept && matchesDay && matchesCredits;
   });
   const majorCurriculumExtras = majorCurriculumExtrasByMajor[user?.major] || [];
   const shownCount = catalogCategory === "curriculum"
@@ -319,11 +326,23 @@ export default function App() {
                 <div className="catalog-toolbar">
                   <label className="search-field">
                     <span aria-hidden="true">⌕</span>
-                    <input type="search" className="form-input" aria-label="Search courses" placeholder="Search by code, title, or instructor" value={searchTerm} onChange={event => setSearchTerm(event.target.value)} />
+                    <input type="search" className="form-input" aria-label="Search courses" placeholder="Search courses" value={searchTerm} onChange={event => setSearchTerm(event.target.value)} />
                   </label>
                   <select className="form-input department-select" aria-label="Filter courses by department" value={selectedDept} onChange={event => setSelectedDept(event.target.value)}>
                     <option value="ALL">All departments</option>
                     {departmentOptions.map(department => <option key={department} value={department}>{department}</option>)}
+                  </select>
+                  <select className="form-input day-select" aria-label="Filter courses by day" value={selectedDay} onChange={event => setSelectedDay(event.target.value)}>
+                    <option value="ALL">All days</option>
+                    <option value="1">Monday</option>
+                    <option value="2">Tuesday</option>
+                    <option value="3">Wednesday</option>
+                    <option value="4">Thursday</option>
+                    <option value="5">Friday</option>
+                  </select>
+                  <select className="form-input credit-select" aria-label="Filter courses by credit value" value={selectedCredits} onChange={event => setSelectedCredits(event.target.value)}>
+                    <option value="ALL">All credits</option>
+                    {creditOptions.map(credits => <option key={credits} value={credits}>{credits} credits</option>)}
                   </select>
                 </div>
 
@@ -335,7 +354,7 @@ export default function App() {
 
                 <div className="catalog-summary">
                   <span>{catalogCategory === "major" ? `Courses you can select now for ${user.major}. Required courses come first; optional courses can fill the remaining credits.` : "All open sections for the current semester, including other majors and general electives."}</span>
-                  {(searchTerm || selectedDept !== "ALL") && <button className="text-link" type="button" onClick={() => { setSearchTerm(""); setSelectedDept("ALL"); }}>Clear filters</button>}
+                  {(searchTerm || selectedDept !== "ALL" || selectedDay !== "ALL" || selectedCredits !== "ALL") && <button className="text-link" type="button" onClick={() => { setSearchTerm(""); setSelectedDept("ALL"); setSelectedDay("ALL"); setSelectedCredits("ALL"); }}>Clear filters</button>}
                 </div>
 
                 {filteredCourses.length === 0 ? (
