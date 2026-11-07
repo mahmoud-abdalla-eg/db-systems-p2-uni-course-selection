@@ -88,7 +88,7 @@ public class Models {
         public String courseCode;
         public String title;
         public String department;
-        public int credits;
+        public double credits;
         public int capacity;
         public int enrolledCount;
         public String instructor;
@@ -111,7 +111,7 @@ public class Models {
         public int courseId;
         public String courseCode;
         public String title;
-        public int credits;
+        public double credits;
         public String semester;
         public String grade;
         public String status; // "PASSED", "FAILED"
@@ -123,7 +123,7 @@ public class Models {
         public int courseId;
         public String courseCode;
         public String title;
-        public int credits;
+        public double credits;
         public String instructor;
         public String semester;
         public String status; // "ENROLLED", "DROPPED"
@@ -133,8 +133,8 @@ public class Models {
 
     public static class StudentDashboard {
         public User user;
-        public int currentCredits;
-        public int maxCredits = 21;
+        public double currentCredits;
+        public double maxCredits = 21;
         public List<Enrollment> enrolledCourses = new ArrayList<>();
         public List<Course> selectableCourses = new ArrayList<>();
         public List<HistoryRecord> academicHistory = new ArrayList<>();

@@ -46,7 +46,17 @@ INSERT INTO courses (course_id, course_code, title, department, credits, capacit
 (33, 'ART101', 'Digital Media Design', 'Arts', 2, 35, 'Prof. Nabil', '2026-Fall', 'Visual composition, digital storytelling, typography, and design practice.'),
 (34, 'PSY101', 'Psychology and Learning', 'Social Sciences', 3, 50, 'Prof. Ahmed', '2026-Fall', 'Learning, memory, motivation, social behavior, and human development.'),
 (35, 'CHEM101', 'General Chemistry', 'Chemistry', 3, 45, 'Prof. Li', '2026-Fall', 'Matter, reactions, bonding, energy, and quantitative chemical reasoning.'),
-(36, 'LANG101', 'Arabic Language and Culture', 'Foreign Languages', 2, 40, 'Prof. Omar', '2026-Fall', 'Practical Arabic communication and an introduction to Arabic-speaking cultures.')
+(36, 'LANG101', 'Arabic Language and Culture', 'Foreign Languages', 2, 40, 'Prof. Omar', '2026-Fall', 'Practical Arabic communication and an introduction to Arabic-speaking cultures.'),
+(37, 'MATH105', 'Mathematics Support Workshop', 'Mathematics', 0.5, 35, 'Prof. He', '2026-Fall', 'Short guided practice for algebra, functions, and mathematical study habits.'),
+(38, 'GEN104', 'University Study Skills', 'General Education', 1, 60, 'Prof. Nadia', '2026-Fall', 'Note-taking, research planning, time management, and academic integrity.'),
+(39, 'LANG102', 'Chinese Conversation Lab', 'Foreign Languages', 0.5, 30, 'Prof. Liu', '2026-Fall', 'Practical speaking exercises for everyday university communication.'),
+(40, 'BUS102', 'Career Planning Seminar', 'Business', 1, 70, 'Prof. Karim', '2026-Fall', 'CV writing, interviews, professional communication, and early career planning.'),
+(41, 'IS202', 'Digital Productivity Tools', 'Information Systems', 1, 45, 'Prof. Hassan', '2026-Fall', 'Practical work with spreadsheets, collaboration tools, and digital workflows.'),
+(42, 'ART102', 'Creative Portfolio Lab', 'Arts', 0.5, 25, 'Prof. Nabil', '2026-Fall', 'A short studio lab for presenting and improving a digital creative portfolio.'),
+(43, 'LAW102', 'Technology Policy Seminar', 'Law', 1, 55, 'Prof. Rahman', '2026-Fall', 'Current discussions of technology policy, data rights, and responsible innovation.'),
+(44, 'PHY102', 'Physics Problem-Solving Lab', 'Physics', 0.5, 30, 'Prof. Zhou', '2026-Fall', 'Guided practice connecting physical principles with engineering problems.'),
+(45, 'BIO102', 'Health and Wellness Seminar', 'Life Sciences', 1, 65, 'Prof. Chen', '2026-Fall', 'Evidence-based habits for health, wellbeing, and sustainable student life.'),
+(46, 'SOC102', 'Community Engagement', 'Social Sciences', 0.5, 50, 'Prof. Amal', '2026-Fall', 'A short service-learning course about communities, citizenship, and social impact.')
 ON DUPLICATE KEY UPDATE title=VALUES(title);
 
 -- Course Schedules
@@ -88,7 +98,17 @@ INSERT INTO course_schedules (schedule_id, course_id, day_of_week, start_period,
 (33, 33, 5, 7, 8, 'Arts Studio A101'),
 (34, 34, 1, 3, 4, 'Social Sciences S101'),
 (35, 35, 2, 7, 8, 'Science Hall C101'),
-(36, 36, 3, 7, 8, 'Language Center E103')
+(36, 36, 3, 7, 8, 'Language Center E103'),
+(37, 37, 1, 9, 10, 'Math Hall M105'),
+(38, 38, 2, 9, 10, 'Learning Center L104'),
+(39, 39, 3, 9, 10, 'Language Center E104'),
+(40, 40, 4, 9, 10, 'Business Hall H102'),
+(41, 41, 5, 9, 10, 'Business Hall H202'),
+(42, 42, 1, 11, 12, 'Arts Studio A102'),
+(43, 43, 2, 11, 12, 'Law Hall L102'),
+(44, 44, 3, 11, 12, 'Science Hall P102'),
+(45, 45, 4, 11, 12, 'Life Sciences B102'),
+(46, 46, 5, 11, 12, 'Social Sciences S102')
 ON DUPLICATE KEY UPDATE classroom=VALUES(classroom);
 
 -- Prerequisites

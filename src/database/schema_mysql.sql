@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS courses (
     course_code VARCHAR(20) NOT NULL UNIQUE,  -- e.g. 'CS101', 'CS201', 'CS301'
     title VARCHAR(150) NOT NULL,
     department VARCHAR(100) NOT NULL,
-    credits INT NOT NULL CHECK (credits > 0),
+    credits DECIMAL(3,1) NOT NULL CHECK (credits > 0),
     capacity INT NOT NULL DEFAULT 40,
     instructor VARCHAR(100) NOT NULL,
     semester VARCHAR(20) NOT NULL DEFAULT '2026-Fall',

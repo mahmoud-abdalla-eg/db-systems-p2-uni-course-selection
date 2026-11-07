@@ -355,7 +355,7 @@ export default function App() {
                   </select>
                   <select className="form-input credit-select" aria-label="Filter courses by credit value" value={selectedCredits} onChange={event => setSelectedCredits(event.target.value)}>
                     <option value="ALL">All credits</option>
-                    {creditOptions.map(credits => <option key={credits} value={credits}>{credits} credits</option>)}
+                    {creditOptions.map(credits => <option key={credits} value={credits}>{credits} credit{credits === 1 ? "" : "s"}</option>)}
                   </select>
                 </div>
 

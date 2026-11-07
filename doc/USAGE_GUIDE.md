@@ -51,7 +51,7 @@ erDiagram
         string course_code UK
         string title
         string department
-        int credits
+        decimal credits
         int capacity
         int enrolled_count
         string instructor
@@ -93,8 +93,8 @@ erDiagram
 
 ### Table Definitions:
 1. `users`: Stores student accounts, identification numbers, and role permissions.
-2. `courses`: Course catalog, unit credits (2-4 credits), and capacity.
-3. `course_schedules`: Time slots where `day_of_week` (1=Mon ... 5=Fri) and periods (1 to 8) define exact meeting windows.
+2. `courses`: Course catalog, unit credits (including 0.5- and 1-credit workshops), and capacity.
+3. `course_schedules`: Time slots where `day_of_week` (1=Mon ... 5=Fri) and periods (1 to 12) define exact meeting windows.
 4. `course_prerequisites`: Self-referential relationship modeling which courses require prior course completion.
 5. `student_course_history`: Historical academic transcript recording completed semesters and passing grades.
 6. `enrollments`: Current active semester course registrations.

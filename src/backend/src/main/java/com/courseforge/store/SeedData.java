@@ -143,14 +143,24 @@ public class SeedData {
                         {"33", "ART101", "Digital Media Design", "Arts", "2", "35", "Prof. Nabil", "2026-Fall", "Visual composition, digital storytelling, typography, and design practice."},
                         {"34", "PSY101", "Psychology and Learning", "Social Sciences", "3", "50", "Prof. Ahmed", "2026-Fall", "Learning, memory, motivation, social behavior, and human development."},
                         {"35", "CHEM101", "General Chemistry", "Chemistry", "3", "45", "Prof. Li", "2026-Fall", "Matter, reactions, bonding, energy, and quantitative chemical reasoning."},
-                        {"36", "LANG101", "Arabic Language and Culture", "Foreign Languages", "2", "40", "Prof. Omar", "2026-Fall", "Practical Arabic communication and an introduction to Arabic-speaking cultures."}
+                        {"36", "LANG101", "Arabic Language and Culture", "Foreign Languages", "2", "40", "Prof. Omar", "2026-Fall", "Practical Arabic communication and an introduction to Arabic-speaking cultures."},
+                        {"37", "MATH105", "Mathematics Support Workshop", "Mathematics", "0.5", "35", "Prof. He", "2026-Fall", "Short guided practice for algebra, functions, and mathematical study habits."},
+                        {"38", "GEN104", "University Study Skills", "General Education", "1", "60", "Prof. Nadia", "2026-Fall", "Note-taking, research planning, time management, and academic integrity."},
+                        {"39", "LANG102", "Chinese Conversation Lab", "Foreign Languages", "0.5", "30", "Prof. Liu", "2026-Fall", "Practical speaking exercises for everyday university communication."},
+                        {"40", "BUS102", "Career Planning Seminar", "Business", "1", "70", "Prof. Karim", "2026-Fall", "CV writing, interviews, professional communication, and early career planning."},
+                        {"41", "IS202", "Digital Productivity Tools", "Information Systems", "1", "45", "Prof. Hassan", "2026-Fall", "Practical work with spreadsheets, collaboration tools, and digital workflows."},
+                        {"42", "ART102", "Creative Portfolio Lab", "Arts", "0.5", "25", "Prof. Nabil", "2026-Fall", "A short studio lab for presenting and improving a digital creative portfolio."},
+                        {"43", "LAW102", "Technology Policy Seminar", "Law", "1", "55", "Prof. Rahman", "2026-Fall", "Current discussions of technology policy, data rights, and responsible innovation."},
+                        {"44", "PHY102", "Physics Problem-Solving Lab", "Physics", "0.5", "30", "Prof. Zhou", "2026-Fall", "Guided practice connecting physical principles with engineering problems."},
+                        {"45", "BIO102", "Health and Wellness Seminar", "Life Sciences", "1", "65", "Prof. Chen", "2026-Fall", "Evidence-based habits for health, wellbeing, and sustainable student life."},
+                        {"46", "SOC102", "Community Engagement", "Social Sciences", "0.5", "50", "Prof. Amal", "2026-Fall", "A short service-learning course about communities, citizenship, and social impact."}
                 };
                 for (String[] course : courses) {
                     ps.setInt(1, Integer.parseInt(course[0]));
                     ps.setString(2, course[1]);
                     ps.setString(3, course[2]);
                     ps.setString(4, course[3]);
-                    ps.setInt(5, Integer.parseInt(course[4]));
+                    ps.setDouble(5, Double.parseDouble(course[4]));
                     ps.setInt(6, Integer.parseInt(course[5]));
                     ps.setString(7, course[6]);
                     ps.setString(8, course[7]);
@@ -193,7 +203,17 @@ public class SeedData {
                         {"ART101", "5", "7", "8", "Arts Studio A101"},
                         {"PSY101", "1", "3", "4", "Social Sciences S101"},
                         {"CHEM101", "2", "7", "8", "Science Hall C101"},
-                        {"LANG101", "3", "7", "8", "Language Center E103"}
+                        {"LANG101", "3", "7", "8", "Language Center E103"},
+                        {"MATH105", "1", "9", "10", "Math Hall M105"},
+                        {"GEN104", "2", "9", "10", "Learning Center L104"},
+                        {"LANG102", "3", "9", "10", "Language Center E104"},
+                        {"BUS102", "4", "9", "10", "Business Hall H102"},
+                        {"IS202", "5", "9", "10", "Business Hall H202"},
+                        {"ART102", "1", "11", "12", "Arts Studio A102"},
+                        {"LAW102", "2", "11", "12", "Law Hall L102"},
+                        {"PHY102", "3", "11", "12", "Science Hall P102"},
+                        {"BIO102", "4", "11", "12", "Life Sciences B102"},
+                        {"SOC102", "5", "11", "12", "Social Sciences S102"}
                 };
                 for (String[] schedule : schedules) {
                     ps.setInt(1, Integer.parseInt(schedule[1]));

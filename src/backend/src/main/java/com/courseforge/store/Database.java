@@ -80,7 +80,7 @@ public class Database {
                     course_code VARCHAR(20) NOT NULL UNIQUE,
                     title VARCHAR(150) NOT NULL,
                     department VARCHAR(100) NOT NULL,
-                    credits INTEGER NOT NULL,
+                    credits REAL NOT NULL CHECK (credits > 0),
                     capacity INTEGER NOT NULL DEFAULT 40,
                     enrolled_count INTEGER NOT NULL DEFAULT 0,
                     instructor VARCHAR(100) NOT NULL,
@@ -88,6 +88,11 @@ public class Database {
                     description TEXT
                 );
             """);
+
+            if (isMySQL) {
+                // Keep an older MySQL installation compatible with half-credit courses.
+                stmt.execute("ALTER TABLE courses MODIFY credits DECIMAL(3,1) NOT NULL");
+            }
 
             stmt.execute("""
                 CREATE TABLE IF NOT EXISTS course_schedules (
@@ -236,7 +241,7 @@ public class Database {
                 c.courseCode = rs.getString("course_code");
                 c.title = rs.getString("title");
                 c.department = rs.getString("department");
-                c.credits = rs.getInt("credits");
+                c.credits = rs.getDouble("credits");
                 c.capacity = rs.getInt("capacity");
                 c.enrolledCount = rs.getInt("enrolled_count");
                 c.instructor = rs.getString("instructor");
@@ -318,7 +323,7 @@ public class Database {
                     r.courseId = rs.getInt("course_id");
                     r.courseCode = rs.getString("course_code");
                     r.title = rs.getString("title");
-                    r.credits = rs.getInt("credits");
+                    r.credits = rs.getDouble("credits");
                     r.semester = rs.getString("semester");
                     r.grade = rs.getString("grade");
                     r.status = rs.getString("status");
@@ -348,7 +353,7 @@ public class Database {
                     e.courseId = rs.getInt("course_id");
                     e.courseCode = rs.getString("course_code");
                     e.title = rs.getString("title");
-                    e.credits = rs.getInt("credits");
+                    e.credits = rs.getDouble("credits");
                     e.instructor = rs.getString("instructor");
                     e.semester = rs.getString("semester");
                     e.status = rs.getString("status");
@@ -380,7 +385,7 @@ public class Database {
         return list;
     }
 
-    public int getCurrentCredits(int userId) throws SQLException {
+    public double getCurrentCredits(int userId) throws SQLException {
         String sql = """
             SELECT IFNULL(SUM(c.credits), 0) AS total_credits
             FROM enrollments e
@@ -391,7 +396,7 @@ public class Database {
             ps.setInt(1, userId);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return rs.getInt("total_credits");
+                    return rs.getDouble("total_credits");
                 }
             }
         }
@@ -448,7 +453,7 @@ public class Database {
         }
 
         // 4. [CONSTRAINT 2] Credit Limit Check (<= 21 credits)
-        int currentCredits = getCurrentCredits(userId);
+        double currentCredits = getCurrentCredits(userId);
         if (currentCredits + target.credits > 21) {
             throw new IllegalArgumentException("Can't select this course: it would exceed the 21-credit limit.");
         }

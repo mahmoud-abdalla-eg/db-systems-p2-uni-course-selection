@@ -13,12 +13,13 @@ export default function CourseCard({ course, onEnroll, onDrop, loading }) {
   const isEnrolled = Boolean(course.isEnrolled);
   const isSelectable = course.isSelectable !== false;
   const reason = course.unselectableReason;
+  const creditLabel = `${course.credits} credit${course.credits === 1 ? "" : "s"}`;
 
   return (
     <article className={`course-card ${isEnrolled ? "enrolled" : ""} ${!isSelectable && !isEnrolled ? "conflict" : ""}`}>
       <div className="card-top">
         <span className="course-code">{course.courseCode}</span>
-        <span className="credits-badge">{course.credits} credits</span>
+        <span className="credits-badge">{creditLabel}</span>
       </div>
 
       <h3 className="course-title">{course.title}</h3>
