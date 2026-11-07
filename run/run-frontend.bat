@@ -3,7 +3,7 @@ REM =========================================================================
 REM  Uni Course Selection - Frontend Launcher
 REM =========================================================================
 cd /d "%~dp0\..\src\frontend"
-if not exist "node_modules" (
+if not exist "node_modules\.bin\vite.cmd" (
     echo Installing frontend dependencies...
     call npm install
     if errorlevel 1 (
