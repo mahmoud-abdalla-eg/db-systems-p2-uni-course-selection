@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-export default function AuthModal({ isOpen, onClose, onLogin, onRegister }) {
+export default function AuthModal({ isOpen, onClose, onLogin, onRegister, embedded = false }) {
   const [isRegister, setIsRegister] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -14,7 +14,7 @@ export default function AuthModal({ isOpen, onClose, onLogin, onRegister }) {
     if (isOpen) setError(null);
   }, [isOpen]);
 
-  if (!isOpen) return null;
+  if (!isOpen && !embedded) return null;
 
   function switchMode(registerMode) {
     setIsRegister(registerMode);
@@ -66,15 +66,14 @@ export default function AuthModal({ isOpen, onClose, onLogin, onRegister }) {
     switchMode(false);
   }
 
-  return (
-    <div className="modal-overlay" role="presentation" onClick={onClose}>
-      <section className="modal-content auth-modal" role="dialog" aria-modal="true" aria-labelledby="auth-title" onClick={event => event.stopPropagation()}>
+  const content = (
+      <section className={`modal-content auth-modal ${embedded ? "auth-page-card" : ""}`} role="dialog" aria-modal="true" aria-labelledby="auth-title" onClick={event => event.stopPropagation()}>
         <div className="modal-header">
           <div>
             <p className="kicker">Uni Course Selection</p>
             <h2 id="auth-title">{isRegister ? "Create your student account" : "Welcome back"}</h2>
           </div>
-          <button className="modal-close" type="button" onClick={onClose} aria-label="Close authentication dialog">&times;</button>
+          {!embedded && <button className="modal-close" type="button" onClick={onClose} aria-label="Close authentication dialog">&times;</button>}
         </div>
 
         <p className="auth-intro">
@@ -137,6 +136,7 @@ export default function AuthModal({ isOpen, onClose, onLogin, onRegister }) {
           </div>
         )}
       </section>
-    </div>
   );
+
+  return embedded ? content : <div className="modal-overlay" role="presentation" onClick={onClose}>{content}</div>;
 }

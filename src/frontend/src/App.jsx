@@ -8,24 +8,29 @@ import AcademicHistoryModal from "./components/AcademicHistoryModal";
 import { api } from "./api";
 
 const tabs = [
-  { id: "available", label: "Course catalog" },
+  { id: "available", label: "Browse courses" },
   { id: "enrolled", label: "My selection" },
   { id: "timetable", label: "Timetable" },
   { id: "rules", label: "Selection rules" }
 ];
 
+const categoryTitles = {
+  all: "All courses",
+  major: "Recommended for your major",
+  elective: "General electives"
+};
+
 export default function App() {
   const [user, setUser] = useState(api.getCurrentUser());
   const [authReady, setAuthReady] = useState(false);
   const [dashboard, setDashboard] = useState(null);
-  const [allCourses, setAllCourses] = useState([]);
   const [activeTab, setActiveTab] = useState("available");
+  const [catalogCategory, setCatalogCategory] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDept, setSelectedDept] = useState("ALL");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
-  const [authModalOpen, setAuthModalOpen] = useState(false);
   const [historyModalOpen, setHistoryModalOpen] = useState(false);
 
   useEffect(() => {
@@ -45,12 +50,7 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (!authReady) return;
-    if (user) {
-      loadDashboard();
-    } else {
-      loadPublicCourses();
-    }
+    if (authReady && user) loadDashboard();
   }, [user, authReady]);
 
   async function loadDashboard() {
@@ -58,19 +58,6 @@ export default function App() {
     try {
       const data = await api.getDashboard();
       setDashboard(data);
-      setError(null);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function loadPublicCourses() {
-    setLoading(true);
-    try {
-      const courses = await api.getAllCourses();
-      setAllCourses(courses);
       setError(null);
     } catch (err) {
       setError(err.message);
@@ -99,9 +86,16 @@ export default function App() {
     api.logout();
     setUser(null);
     setDashboard(null);
-    setSuccess("You have been signed out.");
+    setSuccess(null);
     setError(null);
     setActiveTab("available");
+  }
+
+  function handleCatalogChange(category) {
+    setCatalogCategory(category);
+    setActiveTab("available");
+    setSearchTerm("");
+    setSelectedDept("ALL");
   }
 
   async function handleEnroll(courseId) {
@@ -134,8 +128,17 @@ export default function App() {
     }
   }
 
-  const coursesToDisplay = user && dashboard ? dashboard.selectableCourses : allCourses;
-  const filteredCourses = coursesToDisplay.filter(course => {
+  const courses = dashboard?.selectableCourses || [];
+  const categoryCourses = courses.filter(course => {
+    if (catalogCategory === "all") return true;
+    if (catalogCategory === "major") {
+      return course.department.toLowerCase() === (user?.major || "").toLowerCase();
+    }
+    return course.courseCode.startsWith("GEN") ||
+      course.department === "Foreign Languages" ||
+      course.department === "Mathematics";
+  });
+  const filteredCourses = categoryCourses.filter(course => {
     const term = searchTerm.toLowerCase();
     const matchesSearch = course.title.toLowerCase().includes(term) ||
       course.courseCode.toLowerCase().includes(term) ||
@@ -144,14 +147,47 @@ export default function App() {
     return matchesSearch && matchesDept;
   });
   const enrolledCourses = dashboard?.enrolledCourses || [];
+  const currentCredits = dashboard?.currentCredits || 0;
+  const maxCredits = dashboard?.maxCredits || 21;
+
+  if (!authReady) {
+    return (
+      <div className="app-shell">
+        <Navbar user={null} />
+        <main className="auth-page auth-loading-page"><p>Checking your session...</p></main>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="app-shell">
+        <Navbar user={null} />
+        <main className="auth-page">
+          <section className="auth-welcome">
+            <p className="eyebrow">Database Systems · Project 2</p>
+            <h1>Choose courses with confidence.</h1>
+            <p>Sign in to see courses for your major, plan your credits, and keep your timetable clear.</p>
+            <div className="auth-points">
+              <span><b>01</b> Recommended courses for your major</span>
+              <span><b>02</b> General electives in one place</span>
+              <span><b>03</b> Prerequisite and timetable checks</span>
+            </div>
+          </section>
+          <AuthModal embedded isOpen onClose={() => {}} onLogin={handleLogin} onRegister={handleRegister} />
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="app-shell">
       <Navbar
         user={user}
-        onOpenAuth={() => setAuthModalOpen(true)}
-        onLogout={handleLogout}
+        catalogCategory={catalogCategory}
+        onCatalogChange={handleCatalogChange}
         onOpenHistory={() => setHistoryModalOpen(true)}
+        onLogout={handleLogout}
       />
 
       <main className="container" id="top">
@@ -169,21 +205,13 @@ export default function App() {
           </div>
         )}
 
-        <section className="hero-panel" aria-labelledby="page-title">
-          <div className="hero-copy">
-            <span className="eyebrow">Uni Course Selection · 2026 fall</span>
-            <h1 id="page-title">Build a semester that works.</h1>
-            <p>Browse open sections, check the rules before you register, and keep your timetable conflict-free.</p>
-          </div>
-          <div className="hero-status">
-            <span className="status-dot" aria-hidden="true" />
-            <span>{user ? "Student workspace" : "Catalog preview"}</span>
-            {!user && (
-              <button className="text-link" type="button" onClick={() => setAuthModalOpen(true)}>
-                Sign in to select
-              </button>
-            )}
-          </div>
+        <section className="semester-bar" aria-label="Semester summary">
+          <div className="semester-heading"><span className="kicker">Current registration</span><strong>Uni Course Selection</strong></div>
+          <div className="semester-item"><span>Semester</span><strong>Fall 2026</strong></div>
+          <div className="semester-item"><span>Academic year</span><strong>2026–2027</strong></div>
+          <div className="semester-item"><span>Selected credits</span><strong>{currentCredits} / {maxCredits}</strong></div>
+          <div className="semester-item credits-left"><span>Credits left</span><strong>{Math.max(0, maxCredits - currentCredits)}</strong></div>
+          <span className="semester-status"><span className="status-dot" aria-hidden="true" /> Registration open</span>
         </section>
 
         <div className="workspace-layout">
@@ -191,54 +219,36 @@ export default function App() {
             <div className="panel-heading">
               <div>
                 <p className="kicker">Course catalog</p>
-                <h2 id="catalog-title">Choose your courses</h2>
+                <h2 id="catalog-title">{categoryTitles[catalogCategory]}</h2>
               </div>
               <span className="count-label">{filteredCourses.length} section{filteredCourses.length === 1 ? "" : "s"} shown</span>
             </div>
 
-            <nav className="tabs-nav" aria-label="Course selection views">
-              {tabs.map(tab => {
-                const hidden = (tab.id === "enrolled" || tab.id === "timetable") && !user;
-                if (hidden) return null;
-                return (
-                  <button
-                    key={tab.id}
-                    className={`tab-btn ${activeTab === tab.id ? "active" : ""}`}
-                    type="button"
-                    aria-pressed={activeTab === tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                  >
-                    {tab.label}
-                    {tab.id === "enrolled" ? ` (${enrolledCourses.length})` : ""}
-                  </button>
-                );
-              })}
+            <nav className="tabs-nav" aria-label="Student workspace views">
+              {tabs.map(tab => (
+                <button
+                  key={tab.id}
+                  className={`tab-btn ${activeTab === tab.id ? "active" : ""}`}
+                  type="button"
+                  aria-pressed={activeTab === tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                >
+                  {tab.label}
+                  {tab.id === "enrolled" ? ` (${enrolledCourses.length})` : ""}
+                </button>
+              ))}
             </nav>
 
-            {loading && coursesToDisplay.length === 0 && (
-              <div className="loading-state" role="status">Loading course catalog...</div>
-            )}
+            {loading && courses.length === 0 && <div className="loading-state" role="status">Loading your course catalog...</div>}
 
             {activeTab === "available" && (
               <div>
                 <div className="catalog-toolbar">
                   <label className="search-field">
                     <span aria-hidden="true">⌕</span>
-                    <input
-                      type="search"
-                      className="form-input"
-                      aria-label="Search courses"
-                      placeholder="Search by code, title, or instructor"
-                      value={searchTerm}
-                      onChange={event => setSearchTerm(event.target.value)}
-                    />
+                    <input type="search" className="form-input" aria-label="Search courses" placeholder="Search by code, title, or instructor" value={searchTerm} onChange={event => setSearchTerm(event.target.value)} />
                   </label>
-                  <select
-                    className="form-input department-select"
-                    aria-label="Filter courses by department"
-                    value={selectedDept}
-                    onChange={event => setSelectedDept(event.target.value)}
-                  >
+                  <select className="form-input department-select" aria-label="Filter courses by department" value={selectedDept} onChange={event => setSelectedDept(event.target.value)}>
                     <option value="ALL">All departments</option>
                     <option value="Computer Science">Computer science</option>
                     <option value="Software Engineering">Software engineering</option>
@@ -253,78 +263,46 @@ export default function App() {
                   <span><b>◷</b> Time conflicts blocked</span>
                 </div>
 
-                {!user && (
-                  <div className="guest-banner">
-                    <span><strong>Catalog preview.</strong> Sign in to select courses, test the rules, and view your timetable.</span>
-                    <button className="text-link" type="button" onClick={() => setAuthModalOpen(true)}>Sign in</button>
-                  </div>
-                )}
-
                 <div className="catalog-summary">
-                  <span>{user ? "Eligibility is checked before each enrollment." : "Open sections for the current semester."}</span>
-                  {(searchTerm || selectedDept !== "ALL") && (
-                    <button className="text-link" type="button" onClick={() => { setSearchTerm(""); setSelectedDept("ALL"); }}>
-                      Clear filters
-                    </button>
-                  )}
+                  <span>{catalogCategory === "major" ? `Recommended for ${user.major}.` : catalogCategory === "elective" ? "General education and elective sections." : "All open sections for the current semester."}</span>
+                  {(searchTerm || selectedDept !== "ALL") && <button className="text-link" type="button" onClick={() => { setSearchTerm(""); setSelectedDept("ALL"); }}>Clear filters</button>}
                 </div>
 
                 {filteredCourses.length === 0 ? (
                   <div className="empty-state">
-                    <h2>No matching courses</h2>
-                    <p>Try a different search term or clear the department filter.</p>
+                    <h2>No courses in this category</h2>
+                    <p>Try another category or clear the department filter.</p>
                   </div>
                 ) : (
                   <div className="course-grid">
                     {filteredCourses.map(course => (
-                      <CourseCard
-                        key={course.id}
-                        course={course}
-                        loading={loading}
-                        onEnroll={user ? handleEnroll : () => setAuthModalOpen(true)}
-                        onDrop={handleDrop}
-                      />
+                      <CourseCard key={course.id} course={course} loading={loading} onEnroll={handleEnroll} onDrop={handleDrop} />
                     ))}
                   </div>
                 )}
               </div>
             )}
 
-            {activeTab === "enrolled" && user && (
+            {activeTab === "enrolled" && (
               <section className="selection-view" aria-labelledby="selection-title">
                 <div className="selection-heading">
-                  <div>
-                    <p className="kicker">Current semester</p>
-                    <h2 id="selection-title">My selected courses</h2>
-                  </div>
-                  <strong>{dashboard?.currentCredits || 0} / {dashboard?.maxCredits || 21} credits</strong>
+                  <div><p className="kicker">Current semester</p><h2 id="selection-title">My selected courses</h2></div>
+                  <strong>{currentCredits} / {maxCredits} credits</strong>
                 </div>
                 {enrolledCourses.length === 0 ? (
-                  <div className="empty-state compact-empty">
-                    <h2>Your selection is empty</h2>
-                    <p>Choose a course from the catalog to start planning your semester.</p>
-                    <button className="btn btn-primary" type="button" onClick={() => setActiveTab("available")}>Browse courses</button>
-                  </div>
+                  <div className="empty-state compact-empty"><h2>Your selection is empty</h2><p>Choose a course from the catalog to start planning your semester.</p><button className="btn btn-primary" type="button" onClick={() => setActiveTab("available")}>Browse courses</button></div>
                 ) : (
                   <div className="course-grid">
                     {enrolledCourses.map(enrollment => {
-                      const courseData = dashboard?.selectableCourses.find(course => course.id === enrollment.courseId) || enrollment;
-                      return (
-                        <CourseCard
-                          key={enrollment.id}
-                          course={{ ...courseData, isEnrolled: true, isSelectable: false }}
-                          loading={loading}
-                          onEnroll={handleEnroll}
-                          onDrop={handleDrop}
-                        />
-                      );
+                      const courseData = courses.find(course => course.id === enrollment.courseId) || enrollment;
+                      return <CourseCard key={enrollment.id} course={{ ...courseData, isEnrolled: true, isSelectable: false }} loading={loading} onEnroll={handleEnroll} onDrop={handleDrop} />;
                     })}
                   </div>
                 )}
               </section>
             )}
 
-            {activeTab === "timetable" && user && <TimetableGrid enrolledCourses={enrolledCourses} />}
+            {activeTab === "timetable" && <TimetableGrid enrolledCourses={enrolledCourses} />}
 
             {activeTab === "rules" && (
               <section className="rules-view" aria-labelledby="rules-title">
@@ -341,47 +319,18 @@ export default function App() {
           </section>
 
           <aside className="selection-rail" aria-label="Current semester plan">
-            {user && dashboard ? (
-              <section className="panel plan-panel">
-                <div className="plan-heading">
-                  <div><p className="rail-kicker">Current semester</p><h2>Your plan</h2></div>
-                  <span className="term-badge">2026 fall</span>
+            <section className="panel plan-panel">
+              <div className="plan-heading"><div><p className="rail-kicker">Current semester</p><h2>Your plan</h2></div><span className="term-badge">Fall 2026</span></div>
+              <CreditProgressBar currentCredits={currentCredits} maxCredits={maxCredits} enrolledCount={enrolledCourses.length} />
+              <div className="selected-heading"><h3>Selected courses</h3><span>{enrolledCourses.length} course{enrolledCourses.length === 1 ? "" : "s"}</span></div>
+              {enrolledCourses.length === 0 ? <div className="rail-empty">No courses selected yet.</div> : (
+                <div className="selected-course-list">
+                  {enrolledCourses.map(course => <div className="selected-course-item" key={course.id}><div><strong>{course.courseCode}</strong><span>{course.title}</span><small>{course.credits} credits</small></div><button className="remove-course" type="button" onClick={() => handleDrop(course.courseId)}>Remove</button></div>)}
                 </div>
-
-                <CreditProgressBar
-                  currentCredits={dashboard.currentCredits}
-                  maxCredits={dashboard.maxCredits}
-                  enrolledCount={enrolledCourses.length}
-                />
-
-                <div className="selected-heading">
-                  <h3>Selected courses</h3>
-                  <span>{enrolledCourses.length} course{enrolledCourses.length === 1 ? "" : "s"}</span>
-                </div>
-                {enrolledCourses.length === 0 ? (
-                  <div className="rail-empty">No courses selected yet.</div>
-                ) : (
-                  <div className="selected-course-list">
-                    {enrolledCourses.map(course => (
-                      <div className="selected-course-item" key={course.id}>
-                        <div><strong>{course.courseCode}</strong><span>{course.title}</span><small>{course.credits} credits</small></div>
-                        <button className="remove-course" type="button" onClick={() => handleDrop(course.courseId)}>Remove</button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-                <div className="plan-note"><span>i</span> Every add is checked against prerequisites, the 21-credit ceiling, and timetable conflicts.</div>
-                <button className="btn btn-primary plan-action" type="button" onClick={() => setActiveTab("timetable")}>View timetable <span aria-hidden="true">→</span></button>
-              </section>
-            ) : (
-              <section className="panel signin-panel">
-                <span className="signin-mark">UC</span>
-                <p className="kicker">Ready to plan?</p>
-                <h2>Sign in to build your semester.</h2>
-                <p>Save your selection, see your academic history, and test every course rule with a student account.</p>
-                <button className="btn btn-primary" type="button" onClick={() => setAuthModalOpen(true)}>Sign in or register</button>
-              </section>
-            )}
+              )}
+              <div className="plan-note"><span>i</span> Every add is checked against prerequisites, the 21-credit ceiling, and timetable conflicts.</div>
+              <button className="btn btn-primary plan-action" type="button" onClick={() => setActiveTab("timetable")}>View timetable <span aria-hidden="true">→</span></button>
+            </section>
 
             <section className="panel rules-mini">
               <h2>What the system protects</h2>
@@ -393,19 +342,7 @@ export default function App() {
         </div>
       </main>
 
-      <AuthModal
-        isOpen={authModalOpen}
-        onClose={() => setAuthModalOpen(false)}
-        onLogin={handleLogin}
-        onRegister={handleRegister}
-      />
-
-      <AcademicHistoryModal
-        isOpen={historyModalOpen}
-        onClose={() => setHistoryModalOpen(false)}
-        history={dashboard?.academicHistory || []}
-        studentName={user?.name || ""}
-      />
+      <AcademicHistoryModal isOpen={historyModalOpen} onClose={() => setHistoryModalOpen(false)} history={dashboard?.academicHistory || []} studentName={user?.name || ""} />
     </div>
   );
 }

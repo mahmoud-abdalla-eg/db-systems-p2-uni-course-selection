@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function Navbar({ user, onOpenAuth, onLogout, onOpenHistory }) {
+export default function Navbar({ user, catalogCategory, onCatalogChange, onOpenAuth, onLogout, onOpenHistory }) {
   return (
     <header className="navbar">
       <a className="brand" href="#top" aria-label="Uni Course Selection home">
@@ -10,6 +10,20 @@ export default function Navbar({ user, onOpenAuth, onLogout, onOpenHistory }) {
           <small>Database Systems · Project 2</small>
         </div>
       </a>
+
+      {user && (
+        <nav className="nav-links" aria-label="Course categories">
+          <button className={`nav-link ${catalogCategory === "all" ? "active" : ""}`} type="button" onClick={() => onCatalogChange("all")}>
+            All courses
+          </button>
+          <button className={`nav-link ${catalogCategory === "major" ? "active" : ""}`} type="button" onClick={() => onCatalogChange("major")}>
+            Recommended for major
+          </button>
+          <button className={`nav-link ${catalogCategory === "elective" ? "active" : ""}`} type="button" onClick={() => onCatalogChange("elective")}>
+            General elective
+          </button>
+        </nav>
+      )}
 
       <div className="nav-user">
         {user ? (
@@ -25,11 +39,7 @@ export default function Navbar({ user, onOpenAuth, onLogout, onOpenHistory }) {
               Sign Out
             </button>
           </>
-        ) : (
-          <button className="btn btn-primary" type="button" onClick={onOpenAuth}>
-            Sign In
-          </button>
-        )}
+        ) : <span className="nav-context">Student portal</span>}
       </div>
     </header>
   );

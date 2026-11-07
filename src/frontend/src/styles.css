@@ -1353,3 +1353,197 @@ body {
   .selection-heading { align-items: flex-start; flex-direction: column; gap: 0.4rem; }
   .tab-btn { flex: 0 0 auto; padding-inline: 0.85rem; }
 }
+
+/* Authentication-first flow and compact semester summary */
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-left: auto;
+}
+
+.nav-link {
+  padding: 0.45rem 0.62rem;
+  color: var(--text-muted);
+  background: transparent;
+  border: 0;
+  border-radius: 7px;
+  font-size: 0.75rem;
+  font-weight: 650;
+  transition: color 180ms ease, background 180ms ease, transform 180ms ease;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  color: var(--primary);
+  background: var(--primary-soft);
+}
+
+.nav-link:active { transform: translateY(1px); }
+
+.nav-context {
+  color: var(--text-muted);
+  font-size: 0.76rem;
+}
+
+.auth-page {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(340px, 420px);
+  align-items: center;
+  gap: clamp(2rem, 8vw, 7rem);
+  width: min(1040px, calc(100% - 2rem));
+  min-height: calc(100dvh - 70px);
+  margin: 0 auto;
+  padding: 3rem 0 4rem;
+}
+
+.auth-loading-page {
+  display: grid;
+  place-items: center;
+  color: var(--text-muted);
+  font-size: 0.86rem;
+}
+
+.auth-welcome {
+  max-width: 540px;
+}
+
+.auth-welcome h1 {
+  max-width: 540px;
+  margin: 0.6rem 0 0.85rem;
+  font-family: inherit;
+  font-size: clamp(2.5rem, 6vw, 4.6rem);
+  font-weight: 760;
+  letter-spacing: -0.07em;
+  line-height: 0.98;
+}
+
+.auth-welcome > p:not(.eyebrow) {
+  max-width: 46ch;
+  margin-bottom: 1.8rem;
+  color: var(--text-muted);
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+.auth-points {
+  display: grid;
+  gap: 0.7rem;
+  color: #40546e;
+  font-size: 0.78rem;
+}
+
+.auth-points span {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.auth-points b {
+  display: grid;
+  width: 1.55rem;
+  height: 1.55rem;
+  place-items: center;
+  color: var(--primary);
+  background: var(--primary-soft);
+  border-radius: 6px;
+  font-size: 0.64rem;
+}
+
+.auth-page-card {
+  width: 100%;
+  max-width: none;
+  max-height: none;
+  padding: 1.45rem;
+  box-shadow: 0 18px 45px rgb(30 54 91 / 0.12);
+}
+
+.semester-bar {
+  display: grid;
+  grid-template-columns: minmax(170px, 1.25fr) repeat(4, minmax(105px, 0.75fr)) auto;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  padding: 0.95rem 1.15rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  box-shadow: 0 8px 22px rgb(30 54 91 / 0.06);
+}
+
+.semester-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 0.12rem;
+  padding-right: 1rem;
+  border-right: 1px solid var(--border);
+}
+
+.semester-heading .kicker { margin-bottom: 0; }
+.semester-heading strong { font-size: 0.84rem; letter-spacing: -0.02em; }
+
+.semester-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.semester-item span {
+  color: var(--text-muted);
+  font-size: 0.66rem;
+}
+
+.semester-item strong {
+  color: var(--text-main);
+  font-size: 0.88rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.semester-item.credits-left strong { color: var(--primary); }
+
+.semester-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--success);
+  font-size: 0.68rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.semester-status .status-dot { width: 0.45rem; height: 0.45rem; }
+
+@media (max-width: 1100px) {
+  .semester-bar { grid-template-columns: repeat(4, 1fr); }
+  .semester-heading { grid-column: span 2; border-right: 0; }
+  .semester-status { justify-self: end; }
+}
+
+@media (max-width: 900px) {
+  .auth-page { grid-template-columns: 1fr; gap: 2rem; max-width: 560px; }
+  .auth-welcome { max-width: none; }
+  .auth-welcome h1 { max-width: 470px; }
+}
+
+@media (max-width: 720px) {
+  .nav-links {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    left: 0;
+    overflow-x: auto;
+    padding: 0.45rem 0.75rem;
+    background: white;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-link { flex: 0 0 auto; white-space: nowrap; }
+  .navbar:has(.nav-links) { margin-bottom: 2.65rem; }
+  .semester-bar { grid-template-columns: repeat(2, 1fr); gap: 0.8rem; }
+  .semester-heading { grid-column: span 2; padding-bottom: 0.65rem; border-bottom: 1px solid var(--border); }
+  .semester-status { grid-column: span 2; justify-self: start; }
+  .auth-page { width: min(100% - 1rem, 560px); padding-top: 2rem; }
+  .auth-welcome h1 { font-size: clamp(2.5rem, 14vw, 4rem); }
+}

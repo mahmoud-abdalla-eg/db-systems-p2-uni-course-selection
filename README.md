@@ -9,11 +9,12 @@ Uni Course Selection is a small full-stack database application for the Database
 ## Included Features
 
 - Browse and search the course catalog.
-- Filter courses by department.
-- Register and sign in as a student.
+- Use separate All Courses, Recommended for Major, and General Elective views.
+- Register and sign in from the first screen as a student.
 - Select and drop courses.
 - View the current semester schedule.
 - View academic history used for prerequisite checks.
+- See the current semester, academic year, selected credits, and remaining credits in one compact bar.
 - Show clear reasons when a course cannot be selected.
 - Run the database locally with an embedded SQLite database.
 - Keep a MySQL-compatible schema and seed script in `src/database/`.
@@ -77,7 +78,7 @@ http://localhost:5173
 
 The backend runs at `http://localhost:8080/api` and exposes a health endpoint at `http://localhost:8080/api/health`.
 
-The first run creates and seeds `src/backend/courseforge.db`. The application includes demo students in the sign-in dialog so the prerequisite, credit-limit, and schedule-conflict rules can be demonstrated quickly.
+The first run creates and seeds `src/backend/courseforge.db`. The application opens on a sign-in/register page and includes demo students so the prerequisite, credit-limit, and schedule-conflict rules can be demonstrated quickly.
 
 ## Manual Run
 
