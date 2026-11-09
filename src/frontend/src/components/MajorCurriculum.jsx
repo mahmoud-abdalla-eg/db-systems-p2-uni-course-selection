@@ -4,7 +4,8 @@ function formatCredits(value) {
   return Number.isInteger(value) ? String(value) : Number(value).toFixed(1).replace(/\.0$/, "");
 }
 
-function yearForCourse(course) {
+function yearForCourse(course, courseYears) {
+  if (courseYears[course.courseCode]) return courseYears[course.courseCode];
   const match = course.courseCode.match(/\d{3}/);
   const level = Number.parseInt(match?.[0]?.charAt(0) || "4", 10);
   return Math.min(4, Math.max(1, level));
@@ -17,7 +18,7 @@ function statusFor(course) {
   return { label: "Planned later", className: "planned" };
 }
 
-export default function MajorCurriculum({ major, courses, extras, requiredCodes, studyYear, loading, onEnroll }) {
+export default function MajorCurriculum({ major, courses, extras, requiredCodes, courseYears = {}, studyYear, loading, onEnroll }) {
   const required = new Set(requiredCodes);
   const orderedCourses = [...courses].sort((a, b) => {
     const aPriority = required.has(a.courseCode) ? 0 : 1;
@@ -27,7 +28,7 @@ export default function MajorCurriculum({ major, courses, extras, requiredCodes,
 
   const yearGroups = [1, 2, 3, 4].map(year => ({
     year,
-    courses: orderedCourses.filter(course => yearForCourse(course) === year)
+    courses: orderedCourses.filter(course => yearForCourse(course, courseYears) === year)
   })).filter(group => group.courses.length > 0);
 
   const requiredCredits = orderedCourses
@@ -44,32 +45,48 @@ export default function MajorCurriculum({ major, courses, extras, requiredCodes,
   const remainingCredits = Math.max(0, listedCredits - trackedCredits);
   const progressPercent = listedCredits > 0 ? Math.min(100, Math.round((trackedCredits / listedCredits) * 100)) : 0;
 
+  if (orderedCourses.length === 0) {
+    return (
+      <section className="curriculum-view" aria-labelledby="curriculum-title">
+        <div className="curriculum-intro">
+          <p className="kicker">Major catalog</p>
+          <h2 id="curriculum-title">{major} major plan</h2>
+          <p>Track requirements from the current course catalog. This view is not a complete degree audit.</p>
+        </div>
+        <div className="curriculum-empty" role="status">
+          <strong>No {major} courses are listed for the current semester.</strong>
+          <p>Browse All courses to review open sections, or choose a supported major with catalog courses.</p>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="curriculum-view" aria-labelledby="curriculum-title">
       <div className="curriculum-hero">
         <div className="curriculum-intro">
-          <p className="kicker">Degree plan</p>
-          <h2 id="curriculum-title">{major} curriculum</h2>
-          <p>Track the courses in your degree plan, see what is complete, and choose an available course when you are ready.</p>
+          <p className="kicker">Major catalog</p>
+          <h2 id="curriculum-title">{major} major plan</h2>
+          <p>Track the requirements listed in the current catalog, see what is complete, and choose an available course when you are ready.</p>
         </div>
 
         <div className="curriculum-progress-card">
           <div className="curriculum-progress-heading">
-            <span>Degree progress</span>
+          <span>Catalog progress</span>
             <strong>{progressPercent}%</strong>
           </div>
-          <div className="curriculum-progress-track" aria-label={`${progressPercent}% of listed curriculum tracked`}>
+          <div className="curriculum-progress-track" aria-label={`${progressPercent}% of listed major-catalog credits tracked`}>
             <span style={{ width: `${progressPercent}%` }} />
           </div>
-          <small>{formatCredits(trackedCredits)} of {formatCredits(listedCredits)} listed credits tracked</small>
+          <small>{formatCredits(trackedCredits)} of {formatCredits(listedCredits)} listed major-catalog credits tracked</small>
         </div>
       </div>
 
-      <div className="curriculum-stats" aria-label="Degree plan summary">
+      <div className="curriculum-stats" aria-label="Major catalog summary">
         <div className="curriculum-stat"><span>Completed</span><strong>{formatCredits(completedCredits)}</strong><small>credits</small></div>
         <div className="curriculum-stat"><span>Selected now</span><strong>{formatCredits(selectedCredits)}</strong><small>credits</small></div>
         <div className="curriculum-stat"><span>Remaining</span><strong>{formatCredits(remainingCredits)}</strong><small>listed credits</small></div>
-        <div className="curriculum-stat"><span>Required courses</span><strong>{formatCredits(requiredCredits)}</strong><small>credits listed</small></div>
+        <div className="curriculum-stat"><span>Required credits listed</span><strong>{formatCredits(requiredCredits)}</strong><small>current catalog</small></div>
       </div>
 
       <div className="curriculum-sections">
@@ -78,7 +95,7 @@ export default function MajorCurriculum({ major, courses, extras, requiredCodes,
             <div className="curriculum-year-heading">
               <div>
                 <p className="kicker">Year {group.year}</p>
-                <h3>{group.year === studyYear ? "Current study year" : `Year ${group.year} courses`}</h3>
+                <h3>Year {group.year} courses</h3>
               </div>
               <span>{group.courses.length} course{group.courses.length === 1 ? "" : "s"} · {formatCredits(group.courses.reduce((total, course) => total + course.credits, 0))} credits</span>
             </div>
@@ -92,7 +109,7 @@ export default function MajorCurriculum({ major, courses, extras, requiredCodes,
                     <div className="curriculum-code">{course.courseCode}</div>
                     <div className="curriculum-copy">
                       <strong>{course.title}</strong>
-                      <span>{isRequired ? "Required course" : "Professional elective"}</span>
+                      <span>{isRequired ? "Required course" : course.department === major ? "Professional elective" : "General requirement"}</span>
                     </div>
                     <div className="curriculum-credits">{formatCredits(course.credits)}<small>cr</small></div>
                     <span className={`curriculum-status ${status.className}`}><span className="curriculum-status-dot" />{status.label}</span>
@@ -112,8 +129,8 @@ export default function MajorCurriculum({ major, courses, extras, requiredCodes,
           <section className="curriculum-year curriculum-milestones-section">
             <div className="curriculum-year-heading">
               <div>
-                <p className="kicker">Degree milestones</p>
-                <h3>Final-year requirements</h3>
+                <p className="kicker">Later requirements</p>
+                <h3>Requirements to plan later</h3>
               </div>
               <span>{extras.length} requirement{extras.length === 1 ? "" : "s"}</span>
             </div>

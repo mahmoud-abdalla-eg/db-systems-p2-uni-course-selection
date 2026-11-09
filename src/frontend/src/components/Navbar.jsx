@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function Navbar({ user, catalogCategory, onCatalogChange, onOpenAuth, onLogout }) {
+export default function Navbar({ user, activeTab, catalogCategory, onCatalogChange, onWorkspaceChange, onLogout }) {
   return (
     <header className="navbar">
       <a className="brand" href="#top" aria-label="University Course Selection home">
@@ -11,15 +11,24 @@ export default function Navbar({ user, catalogCategory, onCatalogChange, onOpenA
       </a>
 
       {user && (
-        <nav className="nav-links" aria-label="Course categories">
-          <button className={`nav-link ${catalogCategory === "all" ? "active" : ""}`} type="button" onClick={() => onCatalogChange("all")}>
+        <nav className="nav-links" aria-label="Student workspace">
+          <button className={`nav-link ${activeTab === "available" && catalogCategory === "all" ? "active" : ""}`} type="button" onClick={() => onCatalogChange("all")} aria-current={activeTab === "available" && catalogCategory === "all" ? "page" : undefined}>
             All courses
           </button>
-          <button className={`nav-link ${catalogCategory === "major" ? "active" : ""}`} type="button" onClick={() => onCatalogChange("major")}>
+          <button className={`nav-link ${activeTab === "available" && catalogCategory === "major" ? "active" : ""}`} type="button" onClick={() => onCatalogChange("major")} aria-current={activeTab === "available" && catalogCategory === "major" ? "page" : undefined}>
             Recommended this semester
           </button>
-          <button className={`nav-link ${catalogCategory === "curriculum" ? "active" : ""}`} type="button" onClick={() => onCatalogChange("curriculum")}>
+          <button className={`nav-link ${activeTab === "available" && catalogCategory === "curriculum" ? "active" : ""}`} type="button" onClick={() => onCatalogChange("curriculum")} aria-current={activeTab === "available" && catalogCategory === "curriculum" ? "page" : undefined}>
             Major curriculum
+          </button>
+          <button className={`nav-link ${activeTab === "enrolled" ? "active" : ""}`} type="button" onClick={() => onWorkspaceChange("enrolled")} aria-current={activeTab === "enrolled" ? "page" : undefined}>
+            My selection
+          </button>
+          <button className={`nav-link ${activeTab === "timetable" ? "active" : ""}`} type="button" onClick={() => onWorkspaceChange("timetable")} aria-current={activeTab === "timetable" ? "page" : undefined}>
+            Timetable
+          </button>
+          <button className={`nav-link ${activeTab === "rules" ? "active" : ""}`} type="button" onClick={() => onWorkspaceChange("rules")} aria-current={activeTab === "rules" ? "page" : undefined}>
+            Rules
           </button>
         </nav>
       )}

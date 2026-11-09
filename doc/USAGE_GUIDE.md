@@ -7,7 +7,8 @@ This relational database-backed application focuses on course selection and its 
 1. **View Selectable Courses**: Browse all open courses, instructor details, department filters, and real-time seat capacities.
 2. **View Selected Courses**: Inspect active course registrations for the semester.
 3. **Adjust Selected Courses**: Add or drop courses dynamically with transactional consistency.
-4. **Mandatory Constraint Enforcement**:
+4. **Plan the Major Curriculum**: Review a year-by-year plan containing major courses, common foundation requirements, completed or selected status, and later internship or thesis milestones.
+5. **Mandatory Constraint Enforcement**:
    * **Constraint 1 (Prerequisites)**: Ensures prerequisite foundation courses have been completed and passed before allowing enrollment in advanced courses.
    * **Constraint 2 (Credit Limit)**: Enforces an institutional hard ceiling of **no more than 21 credits in one semester**.
    * **Constraint 3 (No Time Conflicts)**: Prevents schedule overlaps between courses meeting on the same day and time periods.
@@ -129,14 +130,17 @@ The relational database initializes with built-in test records demonstrating all
 ### Student 2: Omar Hassan (`omar.hassan@jnu.edu.cn` / `student123`)
 * **Cohort**: 2024 (third year in the current 2026 fall term).
 * **Academic History**: Has completed two academic years, including `CS101`, `CS102`, `CS201`, `CS202`, `CS301`, `SE201`, `SE302`, `AI301`, `MATH201`, and `GEN101`.
-* **Advanced Prerequisite Test**:
-  * Can select `CS301 Advanced Database` and `AI301 Machine Learning`.
+* **Prerequisite Test**:
+  * `CS201` is already passed, so `CS203 Operating Systems` is available to select.
+  * Courses whose prerequisites are not in the history remain blocked.
 * **Time Conflict Test**:
-  * Select `CS101` (Monday Period 1-2).
-  * Try to select `CS301` (Monday Period 1-2) $\rightarrow$ **Blocked by schedule clash**.
+  * Select `CS203 Operating Systems` (Wednesday Period 5-6).
+  * Try to select `AI302 Data Mining` (Wednesday Period 5-6) $\rightarrow$ **Blocked by schedule clash**.
 * **Credit Limit Test**:
-  * Enroll in courses totaling 19 credits.
-  * Try to add a 3-credit course (total 22) $\rightarrow$ **Blocked by 21-credit ceiling**.
+  * Start with an empty selection, then select `IS201`, `DS201`, `CS203`, `CS305`, `SE303`, and `SE304` for a total of 19 credits. These sections use different time slots.
+  * Try to add `SE305` (3 credits, total 22) $\rightarrow$ **Blocked by 21-credit ceiling**.
+
+After each walkthrough, remove the selected courses before starting the next scenario. This keeps the demo account ready for the following test.
 
 ---
 
@@ -151,10 +155,12 @@ The relational database initializes with built-in test records demonstrating all
 ```bash
 # Terminal 1: Backend
 cd "proj 2/src/backend"
-mvn compile exec:java -Dexec.mainClass="com.courseforge.Main"
+javac -encoding UTF-8 -cp "lib/*" -d bin src/main/java/com/courseforge/Main.java src/main/java/com/courseforge/model/Models.java src/main/java/com/courseforge/server/ApiServer.java src/main/java/com/courseforge/server/AuthService.java src/main/java/com/courseforge/server/Json.java src/main/java/com/courseforge/store/Database.java src/main/java/com/courseforge/store/SeedData.java
+java -cp "bin;lib/*" com.courseforge.Main
 
 # Terminal 2: Frontend
 cd "proj 2/src/frontend"
+npm install
 npm run dev
 ```
 

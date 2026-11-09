@@ -12,12 +12,12 @@ University Course Selection is a small full-stack database application for the D
 - Browse all open courses, including courses from other majors and general electives.
 - Search and filter by department, meeting day, and credit value, including 0.5- and 1-credit courses.
 - View courses recommended for the student's major and current semester.
-- View a major curriculum with degree progress, year sections, completed courses, selected courses, and later requirements.
+- View a year-by-year major curriculum combining major courses, common foundation requirements, completed/selected status, and later internship or thesis milestones.
 - Select and drop courses while keeping each student's selection separate.
 - View the current semester timetable.
 - See the current semester, study year, selected credits, and remaining credits in one compact bar.
 - Show clear reasons when a course cannot be selected.
-- Use a floating workspace navigation for Courses, My Selection, Timetable, and Rules.
+- Use one responsive header navigation for All courses, Recommendations, Major curriculum, My selection, Timetable, and Rules.
 - Run the database locally with an embedded SQLite database.
 - Keep a MySQL-compatible schema and seed script in `src/database/`.
 

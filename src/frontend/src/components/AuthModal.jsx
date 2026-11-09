@@ -89,7 +89,10 @@ export default function AuthModal({ isOpen, onClose, onLogin, onRegister, embedd
               </div>
               <div className="form-group">
                 <label htmlFor="student-major">Major</label>
-                <input id="student-major" type="text" className="form-input" required value={major} onChange={event => setMajor(event.target.value)} autoComplete="organization-title" />
+                <select id="student-major" className="form-input" required value={major} onChange={event => setMajor(event.target.value)}>
+                  <option value="Computer Science">Computer Science</option>
+                  <option value="Software Engineering">Software Engineering</option>
+                </select>
               </div>
             </>
           )}

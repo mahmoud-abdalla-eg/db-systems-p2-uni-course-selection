@@ -737,8 +737,8 @@ body {
 .panel {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 16px;
-  box-shadow: 0 18px 45px rgb(30 54 91 / 0.08);
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgb(30 54 91 / 0.05);
 }
 
 .catalog-panel {
@@ -774,7 +774,7 @@ body {
   color: var(--primary);
   font-size: 0.68rem;
   font-weight: 800;
-  letter-spacing: 0.13em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
 }
 
@@ -851,38 +851,6 @@ body {
   width: 125px;
 }
 
-.rule-strip {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0.5rem;
-  margin: 0.25rem 0 1rem;
-  padding: 0.7rem;
-  background: #fafbfd;
-  border: 1px solid #edf0f4;
-  border-radius: 10px;
-}
-
-.rule-strip span {
-  display: flex;
-  align-items: center;
-  gap: 0.42rem;
-  color: var(--text-muted);
-  font-size: 0.69rem;
-  line-height: 1.25;
-}
-
-.rule-strip b {
-  display: grid;
-  flex: 0 0 auto;
-  width: 1.4rem;
-  height: 1.4rem;
-  place-items: center;
-  color: var(--primary);
-  background: var(--primary-soft);
-  border-radius: 6px;
-  font-size: 0.68rem;
-}
-
 .guest-banner {
   display: flex;
   align-items: center;
@@ -910,14 +878,13 @@ body {
 .course-card {
   min-height: 276px;
   padding: 1rem;
-  border-radius: 13px;
+  border-radius: 10px;
   box-shadow: none;
-  transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+  transition: border-color 180ms ease;
 }
 
 .course-card:hover {
   border-color: #c8d8ed;
-  box-shadow: 0 10px 22px rgb(30 54 91 / 0.07);
 }
 
 .course-card.conflict {
@@ -1248,6 +1215,8 @@ body {
   background: #fafbfd;
   border: 1px solid #edf0f4;
   border-radius: 12px;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .selection-heading {
@@ -1272,12 +1241,37 @@ body {
 .compact-empty .btn { margin-top: 1rem; }
 .rules-intro { color: var(--text-muted); font-size: 0.8rem; }
 .rules-list { display: grid; gap: 0.65rem; margin-top: 1.1rem; }
-.rule-row { display: flex; gap: 0.7rem; padding: 0.75rem 0; border-top: 1px solid #eef1f5; }
+.rule-row { display: flex; gap: 0.7rem; min-width: 0; padding: 0.75rem 0; border-top: 1px solid #eef1f5; }
 .rule-row:first-child { border-top: 0; }
+.rule-row > span { flex: 0 0 1.35rem; }
+.rule-row > div { min-width: 0; flex: 1 1 auto; }
 .rule-row strong { display: block; margin-bottom: 0.12rem; font-size: 0.78rem; }
+.rule-row p { margin: 0; overflow-wrap: anywhere; }
 
 .curriculum-view {
   padding: 1.1rem 1.35rem 1.45rem;
+}
+
+.curriculum-empty {
+  margin-top: 1.25rem;
+  padding: 1.1rem;
+  color: var(--text-muted);
+  background: #f8fafc;
+  border: 1px dashed #cbd8e8;
+  border-radius: 9px;
+}
+
+.curriculum-empty strong {
+  display: block;
+  margin-bottom: 0.3rem;
+  color: var(--text-main);
+  font-size: 0.9rem;
+}
+
+.curriculum-empty p {
+  margin: 0;
+  font-size: 0.78rem;
+  line-height: 1.55;
 }
 
 .curriculum-hero {
@@ -1618,7 +1612,6 @@ body {
   .panel-heading { align-items: flex-start; flex-direction: column; gap: 0.4rem; }
   .catalog-toolbar { flex-direction: column; }
   .search-field, .department-select, .day-select, .credit-select { width: 100%; }
-  .rule-strip { grid-template-columns: 1fr; }
   .selection-rail { grid-template-columns: 1fr; }
   .selection-heading { align-items: flex-start; flex-direction: column; gap: 0.4rem; }
   .tab-btn { flex: 0 0 auto; padding-inline: 0.85rem; }
@@ -1694,30 +1687,6 @@ body {
   color: var(--text-muted);
   font-size: 1rem;
   line-height: 1.65;
-}
-
-.auth-points {
-  display: grid;
-  gap: 0.7rem;
-  color: #40546e;
-  font-size: 0.78rem;
-}
-
-.auth-points span {
-  display: flex;
-  align-items: center;
-  gap: 0.65rem;
-}
-
-.auth-points b {
-  display: grid;
-  width: 1.55rem;
-  height: 1.55rem;
-  place-items: center;
-  color: var(--primary);
-  background: var(--primary-soft);
-  border-radius: 6px;
-  font-size: 0.64rem;
 }
 
 .auth-page-card {
@@ -1930,64 +1899,7 @@ body {
   position: sticky;
   top: 4.1rem;
   z-index: 40;
-  box-shadow: 0 10px 24px rgb(30 54 91 / 0.1);
-}
-
-.floating-side-nav {
-  position: fixed;
-  top: 50%;
-  left: max(0.75rem, calc((100vw - 1240px) / 2 - 4.75rem));
-  z-index: 45;
-  display: grid;
-  gap: 0.25rem;
-  padding: 0.35rem;
-  background: rgb(255 255 255 / 0.92);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  box-shadow: 0 12px 28px rgb(30 54 91 / 0.12);
-  backdrop-filter: blur(12px);
-  transform: translateY(-50%);
-}
-
-.floating-nav-item {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  min-width: 7.6rem;
-  padding: 0.58rem 0.65rem;
-  color: var(--text-muted);
-  background: transparent;
-  border: 0;
-  border-radius: 10px;
-  font-size: 0.72rem;
-  font-weight: 700;
-  text-align: left;
-  transition: color 180ms ease, background 180ms ease, transform 180ms ease;
-}
-
-.floating-nav-item:hover {
-  color: var(--primary);
-  background: var(--primary-soft);
-}
-
-.floating-nav-item.active {
-  color: white;
-  background: var(--primary);
-  box-shadow: 0 5px 12px rgb(36 87 166 / 0.22);
-}
-
-.floating-nav-item:active { transform: translateY(1px); }
-
-.floating-nav-icon {
-  display: grid;
-  flex: 0 0 auto;
-  width: 1.45rem;
-  height: 1.45rem;
-  place-items: center;
-  border: 1px solid currentColor;
-  border-radius: 7px;
-  font-size: 0.72rem;
-  line-height: 1;
+  box-shadow: 0 4px 12px rgb(30 54 91 / 0.06);
 }
 
 .standalone-view {
@@ -2014,27 +1926,8 @@ body {
   box-shadow: none;
 }
 
-@media (max-width: 1100px) {
-  .floating-side-nav {
-    top: auto;
-    bottom: 1rem;
-    left: 50%;
-    grid-auto-flow: column;
-    transform: translateX(-50%);
-  }
-
-  .floating-nav-item {
-    min-width: 0;
-    padding: 0.5rem;
-  }
-
-  .floating-nav-item > span:last-child { display: none; }
-}
-
 @media (max-width: 720px) {
   .semester-bar { top: 6.6rem; }
-  .floating-side-nav { bottom: 0.65rem; }
-  .floating-nav-icon { width: 1.6rem; height: 1.6rem; }
 }
 
 /* Denser course catalog cards */
@@ -2046,6 +1939,7 @@ body {
 .course-card {
   min-height: 0;
   padding: 0.8rem;
+  border-radius: 10px;
 }
 
 .course-card.enrolled {
@@ -2112,61 +2006,6 @@ body {
   }
 }
 
-/* Keep the utility rail in the right gutter on desktop */
-@media (min-width: 1101px) {
-  .container {
-    padding-right: 10.5rem;
-  }
-
-  .floating-side-nav {
-    top: 50%;
-    right: 1rem;
-    bottom: auto;
-    left: auto;
-    transform: translateY(-50%);
-  }
-}
-
-.floating-side-nav {
-  gap: 0.15rem;
-  padding: 0.45rem;
-  border-radius: 16px;
-  box-shadow: 0 14px 30px rgb(30 54 91 / 0.14);
-}
-
-.floating-nav-item {
-  min-width: 8.5rem;
-  padding: 0.62rem 0.7rem;
-  border-radius: 11px;
-  font-size: 0.74rem;
-  letter-spacing: -0.01em;
-}
-
-.floating-nav-item.active {
-  box-shadow: 0 6px 14px rgb(36 87 166 / 0.2);
-}
-
-.floating-nav-icon {
-  width: 1.5rem;
-  height: 1.5rem;
-  border: 0;
-  border-radius: 7px;
-}
-
-@media (max-width: 1100px) {
-  .container {
-    padding-right: 0;
-  }
-
-  .floating-side-nav {
-    top: auto;
-    right: auto;
-    bottom: 1rem;
-    left: 50%;
-    transform: translateX(-50%);
-  }
-}
-
 @media (max-width: 720px) {
   .curriculum-view { padding: 0.9rem; }
   .curriculum-hero { grid-template-columns: 1fr; gap: 1rem; }
@@ -2216,51 +2055,5 @@ body {
   .catalog-toolbar .search-field {
     flex: 1 1 32rem;
     min-width: 20rem;
-  }
-}
-
-/* Thin right-side utility rail */
-@media (min-width: 1101px) {
-  .container {
-    padding-right: 6rem;
-  }
-
-  .floating-side-nav {
-    width: 4.35rem;
-    right: 0.85rem;
-    gap: 0.15rem;
-    padding: 0.35rem;
-    border-radius: 13px;
-  }
-
-  .floating-nav-item {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 0.2rem;
-    min-width: 0;
-    min-height: 3.8rem;
-    padding: 0.45rem 0.2rem;
-    color: var(--text-muted);
-    font-size: 0.6rem;
-    font-weight: 700;
-    line-height: 1.1;
-    text-align: center;
-  }
-
-  .floating-nav-item.active {
-    color: var(--primary);
-    background: var(--primary-soft);
-    box-shadow: none;
-  }
-
-  .floating-nav-item:hover {
-    color: var(--primary);
-    background: #f3f6fb;
-  }
-
-  .floating-nav-icon {
-    width: 1.35rem;
-    height: 1.35rem;
   }
 }

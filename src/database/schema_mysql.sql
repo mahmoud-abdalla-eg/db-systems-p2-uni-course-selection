@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS courses (
     department VARCHAR(100) NOT NULL,
     credits DECIMAL(3,1) NOT NULL CHECK (credits > 0),
     capacity INT NOT NULL DEFAULT 40,
+    enrolled_count INT NOT NULL DEFAULT 0,
     instructor VARCHAR(100) NOT NULL,
     semester VARCHAR(20) NOT NULL DEFAULT '2026-Fall',
     description TEXT

@@ -4,15 +4,7 @@ import CourseCard from "./components/CourseCard";
 import MajorCurriculum from "./components/MajorCurriculum";
 import TimetableGrid from "./components/TimetableGrid";
 import AuthModal from "./components/AuthModal";
-import { BookOpen, CalendarDays, CheckSquare, Info } from "lucide-react";
 import { api } from "./api";
-
-const workspaceLinks = [
-  { id: "available", label: "Courses", icon: BookOpen },
-  { id: "enrolled", label: "My selection", icon: CheckSquare },
-  { id: "timetable", label: "Timetable", icon: CalendarDays },
-  { id: "rules", label: "Rules", icon: Info }
-];
 
 const categoryTitles = {
   all: "All courses",
@@ -23,6 +15,20 @@ const categoryTitles = {
 const requiredCourseCodesByMajor = {
   "Computer Science": ["CS101", "CS102", "CS105", "CS201", "CS202", "CS203", "CS305", "CS301"],
   "Software Engineering": ["SE201", "SE202", "SE302", "SE303", "SE304", "SE305", "SE306", "SE307", "SE308"]
+};
+
+const curriculumPlanByMajor = {
+  "Computer Science": [
+    { year: 1, codes: ["CS101", "CS102", "CS105", "MATH201", "GEN101", "GEN104", "LANG101"] },
+    { year: 2, codes: ["CS201", "CS202", "MATH202", "SE201", "GEN102", "GEN103"] },
+    { year: 3, codes: ["CS203", "CS301", "CS305", "AI301", "AI302", "DS201", "IS201"] }
+  ],
+  "Software Engineering": [
+    { year: 1, codes: ["CS101", "CS102", "MATH201", "GEN101", "GEN104", "LANG101"] },
+    { year: 2, codes: ["CS201", "SE201", "SE202", "MATH202", "GEN102", "GEN103"] },
+    { year: 3, codes: ["SE302", "SE303", "SE304", "SE305", "SE306", "SE307", "IS201"] },
+    { year: 4, codes: ["SE308"] }
+  ]
 };
 
 const majorCurriculumExtrasByMajor = {
@@ -164,9 +170,13 @@ export default function App() {
   const currentCredits = dashboard?.currentCredits || 0;
   const maxCredits = dashboard?.maxCredits || 21;
   const requiredCodes = requiredCourseCodesByMajor[user?.major] || [];
-  const majorCourses = courses.filter(course => course.department.toLowerCase() === (user?.major || "").toLowerCase());
+  const curriculumPlan = curriculumPlanByMajor[user?.major] || [];
+  const curriculumCodes = new Set(curriculumPlan.flatMap(section => section.codes));
+  const curriculumYears = Object.fromEntries(curriculumPlan.flatMap(section => section.codes.map(code => [code, section.year])));
+  const majorCourses = courses.filter(course => curriculumCodes.has(course.courseCode));
   const selectableCourses = courses.filter(course => course.isSelectable && !course.isCompleted && !course.isEnrolled);
   const categoryCourses = catalogCategory === "curriculum" ? majorCourses : courses;
+  let recommendationNotice = null;
   const visibleCategoryCourses = catalogCategory === "major"
     ? (() => {
       const order = new Map(requiredCodes.map((code, index) => [code, index]));
@@ -188,9 +198,18 @@ export default function App() {
       let recommendationCredits = 0;
       const remainingCredits = Math.max(0, maxCredits - currentCredits);
       for (const course of orderedCourses) {
-        if (recommendationCredits >= remainingCredits) break;
-        recommendations.push(course);
-        recommendationCredits += course.credits;
+        const availableBudget = remainingCredits - recommendationCredits;
+        if (course.credits <= availableBudget + Number.EPSILON) {
+          recommendations.push(course);
+          recommendationCredits += course.credits;
+        }
+      }
+      if (remainingCredits === 0) {
+        recommendationNotice = "You have reached the 21-credit limit for this semester.";
+      } else if (orderedCourses.length === 0) {
+        recommendationNotice = "No selectable courses are available for your major this semester.";
+      } else if (recommendations.length === 0) {
+        recommendationNotice = `No available course fits the ${remainingCredits}-credit space remaining in your semester plan.`;
       }
       return recommendations;
     })()
@@ -241,13 +260,8 @@ export default function App() {
         <main className="auth-page">
           <section className="auth-welcome">
             <p className="eyebrow">Course planning</p>
-            <h1>Choose courses with confidence.</h1>
-            <p>Sign in to see courses for your major, plan your credits, and keep your timetable clear.</p>
-            <div className="auth-points">
-              <span><b>01</b> Recommended courses for your major</span>
-              <span><b>02</b> General electives in one place</span>
-              <span><b>03</b> Prerequisite and timetable checks</span>
-            </div>
+            <h1>Plan your semester.</h1>
+            <p>Sign in to browse your catalog, choose courses, and check your timetable.</p>
           </section>
           <AuthModal embedded isOpen onClose={() => {}} onLogin={handleLogin} onRegister={handleRegister} />
         </main>
@@ -259,8 +273,10 @@ export default function App() {
     <div className="app-shell">
       <Navbar
         user={user}
+        activeTab={activeTab}
         catalogCategory={catalogCategory}
         onCatalogChange={handleCatalogChange}
+        onWorkspaceChange={setActiveTab}
         onLogout={handleLogout}
       />
 
@@ -288,26 +304,6 @@ export default function App() {
           <span className="semester-status"><span className="status-dot" aria-hidden="true" /> Registration open</span>
         </section>
 
-        <aside className="floating-side-nav" aria-label="Student workspace navigation">
-          {workspaceLinks.map(link => {
-            const Icon = link.icon;
-            return (
-              <button
-                key={link.id}
-                className={`floating-nav-item ${activeTab === link.id ? "active" : ""}`}
-                type="button"
-                title={link.label}
-                aria-label={link.label}
-                aria-current={activeTab === link.id ? "page" : undefined}
-                onClick={() => setActiveTab(link.id)}
-              >
-                <span className="floating-nav-icon" aria-hidden="true"><Icon size={16} strokeWidth={1.8} /></span>
-                <span>{link.label}</span>
-              </button>
-            );
-          })}
-        </aside>
-
         <div className="workspace-layout">
           <section className="panel catalog-panel" aria-labelledby="catalog-title">
             <div className="panel-heading">
@@ -328,6 +324,7 @@ export default function App() {
                     courses={majorCourses}
                     extras={majorCurriculumExtras}
                     requiredCodes={requiredCodes}
+                    courseYears={curriculumYears}
                     studyYear={studyYear}
                     loading={loading}
                     onEnroll={handleEnroll}
@@ -357,14 +354,8 @@ export default function App() {
                   </select>
                 </div>
 
-                <div className="rule-strip" aria-label="Selection rules summary">
-                  <span><b>✓</b> Prerequisites checked</span>
-                  <span><b>21</b> Credit ceiling</span>
-                  <span><b>◷</b> Time conflicts blocked</span>
-                </div>
-
                 <div className="catalog-summary">
-                  <span>{catalogCategory === "major" ? `Courses you can select now for ${user.major}. Required courses come first; optional courses can fill the remaining credits.` : "All open sections for the current semester, including other majors and general electives."}</span>
+                  <span>{catalogCategory === "major" ? (recommendationNotice || `Courses you can select now for ${user.major}. Required courses come first; optional courses can fill the remaining credits.`) : "All open sections for the current semester, including other majors and general electives."}</span>
                   {(searchTerm || selectedDept !== "ALL" || selectedDay !== "ALL" || selectedCredits !== "ALL") && <button className="text-link" type="button" onClick={() => { setSearchTerm(""); setSelectedDept("ALL"); setSelectedDay("ALL"); setSelectedCredits("ALL"); }}>Clear filters</button>}
                 </div>
 

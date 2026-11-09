@@ -9,8 +9,11 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.sql.SQLException;
 import java.util.Map;
+import java.util.Set;
 
 public class ApiServer {
+    private static final Set<String> SUPPORTED_MAJORS = Set.of("Computer Science", "Software Engineering");
+
     private final Database database;
     private final AuthService authService;
     private final HttpServer server;
@@ -75,6 +78,10 @@ public class ApiServer {
                 if (!req.email.contains("@")) {
                     throw new IllegalArgumentException("Enter a valid email address.");
                 }
+                String requestedMajor = req.major == null ? "" : req.major.trim();
+                if (!SUPPORTED_MAJORS.contains(requestedMajor)) {
+                    throw new IllegalArgumentException("Choose a supported major: Computer Science or Software Engineering.");
+                }
                 String requestedUserNo = req.userNo == null ? "" : req.userNo.trim();
                 String studentNumber = requestedUserNo.isEmpty()
                         ? database.generateStudentNumber("2026")
@@ -84,7 +91,7 @@ public class ApiServer {
                         req.name,
                         req.email,
                         req.password,
-                        req.major != null ? req.major : "Computer Science",
+                        requestedMajor,
                         "STUDENT"
                 );
                 User loggedIn = authService.login(user.email, req.password);

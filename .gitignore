@@ -9,6 +9,8 @@ node_modules/
 dist/
 demo/
 # Submission and temporary files
+openspec/
+.agents/
 *.pdf
 *.docx
 *.zip
