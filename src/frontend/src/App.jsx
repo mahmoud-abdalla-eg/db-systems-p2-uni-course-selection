@@ -232,11 +232,9 @@ export default function App() {
     : filteredCourses.length;
   const workspaceTitle = activeTab === "timetable"
     ? "Timetable"
-    : activeTab === "rules"
-      ? "Selection rules"
-      : activeTab === "enrolled"
-        ? "My selected courses"
-        : categoryTitles[catalogCategory];
+    : activeTab === "enrolled"
+      ? "My selected courses"
+      : categoryTitles[catalogCategory];
   const workspaceKicker = activeTab === "available" ? "Course catalog" : "Current semester";
   const enrolledCourses = dashboard?.enrolledCourses || [];
   const cohortYear = Number.parseInt(String(user?.userNo || "").slice(0, 4), 10);
@@ -306,13 +304,15 @@ export default function App() {
 
         <div className="workspace-layout">
           <section className="panel catalog-panel" aria-labelledby="catalog-title">
-            <div className="panel-heading">
-              <div>
-                <p className="kicker">{workspaceKicker}</p>
-                <h2 id="catalog-title">{workspaceTitle}</h2>
+            {activeTab !== "timetable" && (
+              <div className="panel-heading">
+                <div>
+                  <p className="kicker">{workspaceKicker}</p>
+                  <h2 id="catalog-title">{workspaceTitle}</h2>
+                </div>
+                {activeTab === "available" && <span className="count-label">{shownCount} item{shownCount === 1 ? "" : "s"} shown</span>}
               </div>
-              {activeTab === "available" && <span className="count-label">{shownCount} item{shownCount === 1 ? "" : "s"} shown</span>}
-            </div>
+            )}
 
             {loading && courses.length === 0 && <div className="loading-state" role="status">Loading your course catalog...</div>}
 
@@ -406,18 +406,6 @@ export default function App() {
               </section>
             )}
 
-            {activeTab === "rules" && (
-              <section className="standalone-view rules-view" aria-labelledby="rules-title">
-                <p className="kicker">Course planning</p>
-                <h2 id="rules-title">Selection rules</h2>
-                <p className="rules-intro">Each enrollment is checked before it is written to the database.</p>
-                <div className="rules-list">
-                  <div className="rule-row"><span>01</span><div><strong>Prerequisites</strong><p>An advanced course requires its prerequisite to be passed in the student history.</p></div></div>
-                  <div className="rule-row"><span>02</span><div><strong>Credit ceiling</strong><p>The total selected credits cannot exceed 21 in one semester.</p></div></div>
-                  <div className="rule-row"><span>03</span><div><strong>Schedule conflicts</strong><p>Overlapping day and period ranges are rejected before enrollment.</p></div></div>
-                </div>
-              </section>
-            )}
           </section>
         </div>
       </main>

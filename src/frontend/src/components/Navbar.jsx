@@ -27,9 +27,6 @@ export default function Navbar({ user, activeTab, catalogCategory, onCatalogChan
           <button className={`nav-link ${activeTab === "timetable" ? "active" : ""}`} type="button" onClick={() => onWorkspaceChange("timetable")} aria-current={activeTab === "timetable" ? "page" : undefined}>
             Timetable
           </button>
-          <button className={`nav-link ${activeTab === "rules" ? "active" : ""}`} type="button" onClick={() => onWorkspaceChange("rules")} aria-current={activeTab === "rules" ? "page" : undefined}>
-            Rules
-          </button>
         </nav>
       )}
 

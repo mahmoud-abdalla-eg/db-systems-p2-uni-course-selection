@@ -2,15 +2,12 @@
 bin/
 target/
 *.class
-course_data.db
 
 # Generated frontend files
 node_modules/
 dist/
 demo/
 # Submission and temporary files
-openspec/
-.agents/
 *.pdf
 *.docx
 *.zip
